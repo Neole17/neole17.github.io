@@ -1,74 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&display=swap');
 
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  #main-root {
-    width: 100%; height: 100%;
-    background: linear-gradient(135deg, #020818 0%, #041040 40%, #0a2060 70%, #0d3080 100%);
-    position: relative; overflow: hidden;
-    font-family: 'Rajdhani', sans-serif; color: #fff;
-    cursor: default; user-select: none;
-  }
-  .water-overlay {
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,150,255,0.03) 60px, rgba(0,150,255,0.03) 61px),
-                repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,180,255,0.02) 80px, rgba(0,180,255,0.02) 81px);
-    pointer-events: none; z-index: 1;
-  }
-  .scan-lines {
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,30,0.15) 3px, rgba(0,0,30,0.15) 4px);
-    pointer-events: none; z-index: 2;
-  }
-  .ui-corner { position: absolute; z-index: 15; pointer-events: none; }
-  .ui-corner.tl { top: 16px; left: 16px; }
-  .ui-corner.tr { top: 16px; right: 16px; }
-  .ui-corner.bl { bottom: 16px; left: 16px; }
-  .ui-corner.br { bottom: 16px; right: 16px; }
-  .date-display {
-    position: absolute; top: 16px; right: 16px; z-index: 15;
-    font-family: 'Orbitron', sans-serif; font-size: 11px; letter-spacing: 3px;
-    color: rgba(100,200,255,0.5); text-align: right;
-  }
-  .hint-text {
-    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
-    font-size: 11px; letter-spacing: 3px; color: rgba(100,180,255,0.35);
-    text-align: center; animation: pulse 2.5s ease-in-out infinite;
-    text-transform: uppercase; z-index: 10; white-space: nowrap;
-  }
-  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
-  .trigger-zone {
-    position: absolute; left: 0; top: 0; width: 30px; height: 100%;
-    z-index: 30; cursor: pointer;
-  }
-  .shard {
-    position: absolute;
-    background: rgba(100,200,255,0.15);
-    border: 1px solid rgba(100,200,255,0.3);
-    pointer-events: none; z-index: 25; opacity: 0;
-  }
-  @keyframes shardFly {
-    0% { opacity: 0.9; transform: translate(0,0) rotate(0deg) scale(1); }
-    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3); }
-  }
-</style>
+    html, body {
+      width: 100%; height: 100%;
+      background: #020818;
+    }
 
+    #main-root {
+      width: 100%; height: 100vh;
+      background: linear-gradient(135deg, #020818 0%, #041040 40%, #0a2060 70%, #0d3080 100%);
+      position: relative; overflow: hidden;
+      font-family: 'Rajdhani', sans-serif; color: #fff;
+      cursor: default; user-select: none;
+    }
+    .water-overlay {
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,150,255,0.03) 60px, rgba(0,150,255,0.03) 61px),
+        repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,180,255,0.02) 80px, rgba(0,180,255,0.02) 81px);
+      pointer-events: none; z-index: 1;
+    }
+    .scan-lines {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,30,0.15) 3px, rgba(0,0,30,0.15) 4px);
+      pointer-events: none; z-index: 2;
+    }
+    .ui-corner { position: absolute; z-index: 15; pointer-events: none; }
+    .ui-corner.tl { top: 16px; left: 16px; }
+    .ui-corner.tr { top: 16px; right: 16px; }
+    .ui-corner.bl { bottom: 16px; left: 16px; }
+    .ui-corner.br { bottom: 16px; right: 16px; }
+    .date-display {
+      position: absolute; top: 16px; right: 16px; z-index: 15;
+      font-family: 'Orbitron', sans-serif; font-size: 11px; letter-spacing: 3px;
+      color: rgba(100,200,255,0.5); text-align: right;
+    }
+    .hint-text {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; letter-spacing: 3px; color: rgba(100,180,255,0.35);
+      text-align: center; animation: pulse 2.5s ease-in-out infinite;
+      text-transform: uppercase; z-index: 10; white-space: nowrap;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+    .trigger-zone {
+      position: absolute; left: 0; top: 0; width: 30px; height: 100%;
+      z-index: 30; cursor: pointer;
+    }
+    .shard {
+      position: absolute;
+      background: rgba(100,200,255,0.15);
+      border: 1px solid rgba(100,200,255,0.3);
+      pointer-events: none; z-index: 25; opacity: 0;
+    }
+    @keyframes shardFly {
+      0% { opacity: 0.9; transform: translate(0,0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3); }
+    }
+  </style>
+</head>
+<body>
 <div id="main-root">
   <div class="water-overlay"></div>
   <div class="scan-lines"></div>
-  <div class="date-display" id="dateDisplay">TIMEKEEPER<br>00:00</div>
+  <div class="date-display" id="dateDisplay">DARK HOUR<br>00:00</div>
   <div class="ui-corner tl"><svg width="24" height="24" fill="none"><polyline points="0,24 0,0 24,0" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
   <div class="ui-corner tr"><svg width="24" height="24" fill="none"><polyline points="0,0 24,0 24,24" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
   <div class="ui-corner bl"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/><polyline points="0,0 0,24" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
   <div class="ui-corner br"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24 24,0" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
-  <canvas id="radial-canvas"></canvas>
+  <canvas id="radial-canvas" style="position:absolute;inset:0;z-index:20;"></canvas>
   <div class="trigger-zone" id="triggerZone"></div>
   <div class="hint-text">Hover left edge or press Tab to open menu</div>
 </div>
 
 <script>
 (function(){
-  const root = document.getElementById('p3-root');
+  const root = document.getElementById('main-root'); // FIX #1: correct ID
+  if (!root) return;
+
   const canvas = document.getElementById('radial-canvas');
   const ctx = canvas.getContext('2d');
   const trigger = document.getElementById('triggerZone');
@@ -89,85 +105,14 @@
   const GAP_DEG = 6;
   const SEG_DEG = (ANGLE_SPREAD / COUNT) - GAP_DEG;
 
-  // Per-segment shard shape: randomized jagged polygon points
-  // Each shard is defined as offsets from a "base" arc slice
-  // We build them once so they're stable across redraws
-  const shardShapes = ITEMS.map((_, i) => buildShardShape(i));
-
-  function buildShardShape(i) {
-    // seed per index for stable randomness
-    const rng = mulberry32(i * 9999 + 1234);
-    const angle = itemAngle(i);
-    const halfSeg = (SEG_DEG / 2) * Math.PI / 180;
-    const a1 = angle - halfSeg, a2 = angle + halfSeg;
-
-    // We'll generate a polygon with ~8-10 points that roughly follows the arc slice
-    // but with jagged, fractured edges
-    const pts = [];
-    const rInner = HUB_R + SEG_INNER;
-    const rOuter = rInner + SEG_OUTER;
-
-    // Left radial edge (inner to outer) — jagged
-    const leftSteps = 3;
-    for (let s = 0; s <= leftSteps; s++) {
-      const t = s / leftSteps;
-      const r = rInner + (rOuter - rInner) * t;
-      const jitter = (rng() - 0.5) * 10;
-      const angJitter = (rng() - 0.5) * 0.04;
-      pts.push({ r: r + jitter, a: a1 + angJitter });
-    }
-
-    // Outer arc edge — jagged
-    const outerSteps = 4;
-    for (let s = 0; s <= outerSteps; s++) {
-      const t = s / outerSteps;
-      const a = a1 + (a2 - a1) * t;
-      const jitter = (rng() - 0.5) * 14;
-      const angJitter = (rng() - 0.5) * 0.03;
-      pts.push({ r: rOuter + jitter, a: a + angJitter });
-    }
-
-    // Right radial edge (outer to inner) — jagged
-    const rightSteps = 3;
-    for (let s = 0; s <= rightSteps; s++) {
-      const t = s / rightSteps;
-      const r = rOuter + (rInner - rOuter) * t;
-      const jitter = (rng() - 0.5) * 10;
-      const angJitter = (rng() - 0.5) * 0.04;
-      pts.push({ r: r + jitter, a: a2 + angJitter });
-    }
-
-    // Inner arc edge — jagged
-    const innerSteps = 4;
-    for (let s = 0; s <= innerSteps; s++) {
-      const t = s / innerSteps;
-      const a = a2 + (a1 - a2) * t;
-      const jitter = (rng() - 0.5) * 8;
-      const angJitter = (rng() - 0.5) * 0.03;
-      pts.push({ r: rInner + jitter, a: a + angJitter });
-    }
-
-    // Also build a highlight shard (top-left bright sliver)
-    const hlPts = [];
-    hlPts.push({ r: rInner + 4, a: a1 + 0.01 });
-    hlPts.push({ r: rInner + 18 + rng()*10, a: a1 + 0.01 });
-    hlPts.push({ r: rInner + 10 + rng()*8, a: a1 + (a2-a1)*0.3 });
-    hlPts.push({ r: rInner + 5, a: a1 + (a2-a1)*0.25 });
-
-    return { pts, hlPts };
-  }
-
+  // FIX #4: define helpers before use
   function mulberry32(a) {
     return function() {
       a |= 0; a = a + 0x6D2B79F5 | 0;
       var t = Math.imul(a ^ a >>> 15, 1 | a);
       t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    }
-  }
-
-  function getHub() {
-    return { x: -HUB_R + 18, y: root.offsetHeight / 2 };
+    };
   }
 
   function itemAngle(i) {
@@ -176,7 +121,50 @@
     return (start + step * i + step / 2) * Math.PI / 180;
   }
 
-  function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  function buildShardShape(i) {
+    const rng = mulberry32(i * 9999 + 1234);
+    const angle = itemAngle(i);
+    const halfSeg = (SEG_DEG / 2) * Math.PI / 180;
+    const a1 = angle - halfSeg, a2 = angle + halfSeg;
+    const pts = [];
+    const rInner = HUB_R + SEG_INNER;
+    const rOuter = rInner + SEG_OUTER;
+
+    for (let s = 0; s <= 3; s++) {
+      const t = s / 3;
+      pts.push({ r: rInner + (rOuter - rInner) * t + (rng()-0.5)*10, a: a1 + (rng()-0.5)*0.04 });
+    }
+    for (let s = 0; s <= 4; s++) {
+      const t = s / 4;
+      pts.push({ r: rOuter + (rng()-0.5)*14, a: a1 + (a2-a1)*t + (rng()-0.5)*0.03 });
+    }
+    for (let s = 0; s <= 3; s++) {
+      const t = s / 3;
+      pts.push({ r: rOuter + (rInner-rOuter)*t + (rng()-0.5)*10, a: a2 + (rng()-0.5)*0.04 });
+    }
+    for (let s = 0; s <= 4; s++) {
+      const t = s / 4;
+      pts.push({ r: rInner + (rng()-0.5)*8, a: a2 + (a1-a2)*t + (rng()-0.5)*0.03 });
+    }
+
+    const hlPts = [
+      { r: rInner + 4, a: a1 + 0.01 },
+      { r: rInner + 18 + rng()*10, a: a1 + 0.01 },
+      { r: rInner + 10 + rng()*8, a: a1 + (a2-a1)*0.3 },
+      { r: rInner + 5, a: a1 + (a2-a1)*0.25 },
+    ];
+
+    return { pts, hlPts };
+  }
+
+  // Build shapes after helpers are defined
+  const shardShapes = ITEMS.map((_, i) => buildShardShape(i));
+
+  function getHub() {
+    return { x: -HUB_R + 18, y: root.offsetHeight / 2 };
+  }
+
+  function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
 
   function polarToCart(hub, r, a) {
     return { x: hub.x + r * Math.cos(a), y: hub.y + r * Math.sin(a) };
@@ -184,35 +172,36 @@
 
   function drawShard(hub, pts, ep, fillStyle, strokeStyle, strokeWidth) {
     if (pts.length < 3) return;
-    ctx.beginPath();
-    // Scale r by ep for animation
     const rInner = HUB_R + SEG_INNER;
     const scaledPts = pts.map(p => {
-      // animate: each point's radial distance scales from rInner outward
       const scaledR = rInner + (p.r - rInner) * ep;
       return polarToCart(hub, scaledR, p.a);
     });
+    ctx.beginPath();
     ctx.moveTo(scaledPts[0].x, scaledPts[0].y);
-    for (let k = 1; k < scaledPts.length; k++) {
-      ctx.lineTo(scaledPts[k].x, scaledPts[k].y);
-    }
+    for (let k = 1; k < scaledPts.length; k++) ctx.lineTo(scaledPts[k].x, scaledPts[k].y);
     ctx.closePath();
     ctx.fillStyle = fillStyle;
     ctx.fill();
-    ctx.strokeStyle = strokeStyle;
-    ctx.lineWidth = strokeWidth;
-    ctx.stroke();
+    if (strokeWidth > 0) {
+      ctx.strokeStyle = strokeStyle;
+      ctx.lineWidth = strokeWidth;
+      ctx.stroke();
+    }
+  }
+
+  // FIX #3: resize canvas separately, not inside drawFrame
+  function resizeCanvas() {
+    canvas.width = root.offsetWidth;
+    canvas.height = root.offsetHeight;
+    drawFrame();
   }
 
   function drawFrame() {
-    canvas.width = root.offsetWidth;
-    canvas.height = root.offsetHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     const hub = getHub();
     const ep = ease(progress);
 
-    // Hub circle
     if (ep > 0) {
       ctx.save();
       ctx.globalAlpha = Math.min(1, ep * 1.5);
@@ -249,21 +238,13 @@
       const angle = itemAngle(i);
 
       ctx.save();
-
-      // Main shard body
-      const fill = isActive
-        ? `rgba(160,50,0,${0.7 + ep*0.15})`
-        : `rgba(0,40,120,${0.6 + ep*0.1})`;
+      const fill = isActive ? `rgba(160,50,0,${0.7+ep*0.15})` : `rgba(0,40,120,${0.6+ep*0.1})`;
       const stroke = isActive ? 'rgba(255,130,60,0.9)' : 'rgba(70,170,255,0.55)';
       drawShard(hub, shape.pts, ep, fill, stroke, isActive ? 1.5 : 1);
-
-      // Inner bright highlight sliver (glass effect)
       ctx.globalAlpha = ep * (isActive ? 0.55 : 0.3);
-      drawShard(hub, shape.hlPts, ep, isActive ? 'rgba(255,200,160,0.6)' : 'rgba(180,230,255,0.5)', 'transparent', 0);
-
+      drawShard(hub, shape.hlPts, ep, isActive ? 'rgba(255,200,160,0.6)' : 'rgba(180,230,255,0.5)', '', 0);
       ctx.restore();
 
-      // Label
       if (ep > 0.4) {
         const la = Math.min(1, (ep - 0.4) / 0.3);
         const rInner = HUB_R + SEG_INNER;
@@ -280,7 +261,6 @@
         ctx.restore();
       }
 
-      // Active chevron
       if (isActive && ep > 0.75) {
         const aa = (ep - 0.75) / 0.25;
         const rOuter = HUB_R + SEG_INNER + SEG_OUTER * ep;
@@ -371,10 +351,17 @@
     }
   });
 
-  const now = new Date();
-  document.getElementById('dateDisplay').innerHTML =
-    `TIMEKEEPER<br>${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  // FIX #2: use ResizeObserver so canvas always matches root size
+  new ResizeObserver(resizeCanvas).observe(root);
+  resizeCanvas();
 
-  drawFrame();
+  // FIX #5: set date after null check, safely
+  const dateEl = document.getElementById('dateDisplay');
+  if (dateEl) {
+    const now = new Date();
+    dateEl.innerHTML = `DARK HOUR<br>${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }
 })();
 </script>
+</body>
+</html>
