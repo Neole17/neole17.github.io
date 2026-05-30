@@ -9,10 +9,7 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      width: 100%; height: 100%;
-      background: #020818;
-    }
+    html, body { width: 100%; height: 100%; background: #020818; }
 
     #main-root {
       width: 100%; height: 100vh;
@@ -22,16 +19,14 @@
       cursor: default; user-select: none;
     }
     .water-overlay {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
       background:
         repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,150,255,0.03) 60px, rgba(0,150,255,0.03) 61px),
         repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,180,255,0.02) 80px, rgba(0,180,255,0.02) 81px);
-      pointer-events: none; z-index: 1;
     }
     .scan-lines {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; pointer-events: none; z-index: 2;
       background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,30,0.15) 3px, rgba(0,0,30,0.15) 4px);
-      pointer-events: none; z-index: 2;
     }
     .ui-corner { position: absolute; z-index: 15; pointer-events: none; }
     .ui-corner.tl { top: 16px; left: 16px; }
@@ -46,7 +41,7 @@
     .hint-text {
       position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
       font-size: 11px; letter-spacing: 3px; color: rgba(100,180,255,0.35);
-      text-align: center; animation: pulse 2.5s ease-in-out infinite;
+      animation: pulse 2.5s ease-in-out infinite;
       text-transform: uppercase; z-index: 10; white-space: nowrap;
     }
     @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
@@ -54,314 +49,25 @@
       position: absolute; left: 0; top: 0; width: 30px; height: 100%;
       z-index: 30; cursor: pointer;
     }
-    .shard {
-      position: absolute;
-      background: rgba(100,200,255,0.15);
-      border: 1px solid rgba(100,200,255,0.3);
-      pointer-events: none; z-index: 25; opacity: 0;
-    }
-    @keyframes shardFly {
-      0% { opacity: 0.9; transform: translate(0,0) rotate(0deg) scale(1); }
-      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3); }
-    }
   </style>
 </head>
 <body>
 <div id="main-root">
   <div class="water-overlay"></div>
   <div class="scan-lines"></div>
+
   <div class="date-display" id="dateDisplay">DARK HOUR<br>00:00</div>
+
   <div class="ui-corner tl"><svg width="24" height="24" fill="none"><polyline points="0,24 0,0 24,0" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
   <div class="ui-corner tr"><svg width="24" height="24" fill="none"><polyline points="0,0 24,0 24,24" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
   <div class="ui-corner bl"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/><polyline points="0,0 0,24" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
   <div class="ui-corner br"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24 24,0" stroke="rgba(100,200,255,0.4)" stroke-width="1.5"/></svg></div>
+
   <canvas id="radial-canvas" style="position:absolute;inset:0;z-index:20;"></canvas>
   <div class="trigger-zone" id="triggerZone"></div>
   <div class="hint-text">Hover left edge or press Tab to open menu</div>
 </div>
 
-<script>
-(function(){
-  const root = document.getElementById('main-root'); // FIX #1: correct ID
-  if (!root) return;
-
-  const canvas = document.getElementById('radial-canvas');
-  const ctx = canvas.getContext('2d');
-  const trigger = document.getElementById('triggerZone');
-
-  const ITEMS = ['ABOUT','2025','2026','CONTACT'];
-  const COUNT = ITEMS.length;
-
-  let menuOpen = false;
-  let progress = 0;
-  let targetProgress = 0;
-  let activeIdx = 0;
-  let rafId = null;
-
-  const HUB_R = 52;
-  const SEG_INNER = 14;
-  const SEG_OUTER = 100;
-  const ANGLE_SPREAD = 120;
-  const GAP_DEG = 6;
-  const SEG_DEG = (ANGLE_SPREAD / COUNT) - GAP_DEG;
-
-  // FIX #4: define helpers before use
-  function mulberry32(a) {
-    return function() {
-      a |= 0; a = a + 0x6D2B79F5 | 0;
-      var t = Math.imul(a ^ a >>> 15, 1 | a);
-      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };
-  }
-
-  function itemAngle(i) {
-    const start = -ANGLE_SPREAD / 2;
-    const step = ANGLE_SPREAD / COUNT;
-    return (start + step * i + step / 2) * Math.PI / 180;
-  }
-
-  function buildShardShape(i) {
-    const rng = mulberry32(i * 9999 + 1234);
-    const angle = itemAngle(i);
-    const halfSeg = (SEG_DEG / 2) * Math.PI / 180;
-    const a1 = angle - halfSeg, a2 = angle + halfSeg;
-    const pts = [];
-    const rInner = HUB_R + SEG_INNER;
-    const rOuter = rInner + SEG_OUTER;
-
-    for (let s = 0; s <= 3; s++) {
-      const t = s / 3;
-      pts.push({ r: rInner + (rOuter - rInner) * t + (rng()-0.5)*10, a: a1 + (rng()-0.5)*0.04 });
-    }
-    for (let s = 0; s <= 4; s++) {
-      const t = s / 4;
-      pts.push({ r: rOuter + (rng()-0.5)*14, a: a1 + (a2-a1)*t + (rng()-0.5)*0.03 });
-    }
-    for (let s = 0; s <= 3; s++) {
-      const t = s / 3;
-      pts.push({ r: rOuter + (rInner-rOuter)*t + (rng()-0.5)*10, a: a2 + (rng()-0.5)*0.04 });
-    }
-    for (let s = 0; s <= 4; s++) {
-      const t = s / 4;
-      pts.push({ r: rInner + (rng()-0.5)*8, a: a2 + (a1-a2)*t + (rng()-0.5)*0.03 });
-    }
-
-    const hlPts = [
-      { r: rInner + 4, a: a1 + 0.01 },
-      { r: rInner + 18 + rng()*10, a: a1 + 0.01 },
-      { r: rInner + 10 + rng()*8, a: a1 + (a2-a1)*0.3 },
-      { r: rInner + 5, a: a1 + (a2-a1)*0.25 },
-    ];
-
-    return { pts, hlPts };
-  }
-
-  // Build shapes after helpers are defined
-  const shardShapes = ITEMS.map((_, i) => buildShardShape(i));
-
-  function getHub() {
-    return { x: -HUB_R + 18, y: root.offsetHeight / 2 };
-  }
-
-  function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
-
-  function polarToCart(hub, r, a) {
-    return { x: hub.x + r * Math.cos(a), y: hub.y + r * Math.sin(a) };
-  }
-
-  function drawShard(hub, pts, ep, fillStyle, strokeStyle, strokeWidth) {
-    if (pts.length < 3) return;
-    const rInner = HUB_R + SEG_INNER;
-    const scaledPts = pts.map(p => {
-      const scaledR = rInner + (p.r - rInner) * ep;
-      return polarToCart(hub, scaledR, p.a);
-    });
-    ctx.beginPath();
-    ctx.moveTo(scaledPts[0].x, scaledPts[0].y);
-    for (let k = 1; k < scaledPts.length; k++) ctx.lineTo(scaledPts[k].x, scaledPts[k].y);
-    ctx.closePath();
-    ctx.fillStyle = fillStyle;
-    ctx.fill();
-    if (strokeWidth > 0) {
-      ctx.strokeStyle = strokeStyle;
-      ctx.lineWidth = strokeWidth;
-      ctx.stroke();
-    }
-  }
-
-  // FIX #3: resize canvas separately, not inside drawFrame
-  function resizeCanvas() {
-    canvas.width = root.offsetWidth;
-    canvas.height = root.offsetHeight;
-    drawFrame();
-  }
-
-  function drawFrame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const hub = getHub();
-    const ep = ease(progress);
-
-    if (ep > 0) {
-      ctx.save();
-      ctx.globalAlpha = Math.min(1, ep * 1.5);
-      ctx.beginPath();
-      ctx.arc(hub.x, hub.y, HUB_R, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(80,180,255,0.5)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(hub.x, hub.y, HUB_R - 4, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,30,90,0.7)';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(hub.x, hub.y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(100,200,255,0.8)';
-      ctx.fill();
-      for (let t = 0; t < 12; t++) {
-        const ta = (t / 12) * Math.PI * 2;
-        ctx.beginPath();
-        ctx.moveTo(hub.x + (HUB_R-10)*Math.cos(ta), hub.y + (HUB_R-10)*Math.sin(ta));
-        ctx.lineTo(hub.x + (HUB_R-4)*Math.cos(ta), hub.y + (HUB_R-4)*Math.sin(ta));
-        ctx.strokeStyle = 'rgba(100,200,255,0.3)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    if (progress <= 0.005) return;
-
-    ITEMS.forEach((label, i) => {
-      const isActive = i === activeIdx;
-      const shape = shardShapes[i];
-      const angle = itemAngle(i);
-
-      ctx.save();
-      const fill = isActive ? `rgba(160,50,0,${0.7+ep*0.15})` : `rgba(0,40,120,${0.6+ep*0.1})`;
-      const stroke = isActive ? 'rgba(255,130,60,0.9)' : 'rgba(70,170,255,0.55)';
-      drawShard(hub, shape.pts, ep, fill, stroke, isActive ? 1.5 : 1);
-      ctx.globalAlpha = ep * (isActive ? 0.55 : 0.3);
-      drawShard(hub, shape.hlPts, ep, isActive ? 'rgba(255,200,160,0.6)' : 'rgba(180,230,255,0.5)', '', 0);
-      ctx.restore();
-
-      if (ep > 0.4) {
-        const la = Math.min(1, (ep - 0.4) / 0.3);
-        const rInner = HUB_R + SEG_INNER;
-        const rOuter = rInner + SEG_OUTER * ep;
-        const midR = rInner + (rOuter - rInner) * 0.5;
-        ctx.save();
-        ctx.globalAlpha = la;
-        ctx.font = `700 ${isActive ? 13 : 11}px Orbitron, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = isActive ? '#fff' : 'rgba(160,220,255,0.9)';
-        if (isActive) { ctx.shadowColor = 'rgba(255,140,60,0.9)'; ctx.shadowBlur = 12; }
-        ctx.fillText(label, hub.x + midR * Math.cos(angle), hub.y + midR * Math.sin(angle));
-        ctx.restore();
-      }
-
-      if (isActive && ep > 0.75) {
-        const aa = (ep - 0.75) / 0.25;
-        const rOuter = HUB_R + SEG_INNER + SEG_OUTER * ep;
-        ctx.save();
-        ctx.globalAlpha = aa;
-        ctx.fillStyle = '#ff9060';
-        ctx.font = '10px sans-serif';
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('▶', hub.x + (rOuter+13)*Math.cos(angle), hub.y + (rOuter+13)*Math.sin(angle));
-        ctx.restore();
-      }
-    });
-  }
-
-  function animate() {
-    const diff = targetProgress - progress;
-    if (Math.abs(diff) < 0.004) { progress = targetProgress; drawFrame(); rafId = null; return; }
-    progress += diff * 0.18;
-    drawFrame();
-    rafId = requestAnimationFrame(animate);
-  }
-
-  function startAnim() { if (rafId) cancelAnimationFrame(rafId); rafId = requestAnimationFrame(animate); }
-
-  function spawnShards() {
-    for(let i = 0; i < 10; i++) {
-      const s = document.createElement('div');
-      s.className = 'shard';
-      const w = 14+Math.random()*36, h = 7+Math.random()*18;
-      s.style.cssText = `width:${w}px;height:${h}px;top:${10+Math.random()*80}%;left:${Math.random()*20}px;`;
-      s.style.setProperty('--tx', -(20+Math.random()*70)+'px');
-      s.style.setProperty('--ty', (Math.random()-0.5)*60+'px');
-      s.style.setProperty('--rot', (Math.random()-0.5)*100+'deg');
-      s.style.animation = `shardFly ${0.3+Math.random()*0.3}s ease-out ${i*0.025}s forwards`;
-      root.appendChild(s);
-      setTimeout(() => s.remove(), 700);
-    }
-  }
-
-  function openMenu() { if(menuOpen) return; menuOpen=true; spawnShards(); targetProgress=1; startAnim(); }
-  function closeMenu() { if(!menuOpen) return; menuOpen=false; targetProgress=0; startAnim(); }
-  function toggleMenu() { menuOpen ? closeMenu() : openMenu(); }
-
-  function hitTest(mx, my) {
-    const hub = getHub();
-    const ep = ease(progress);
-    const rInner = HUB_R + SEG_INNER;
-    const rOuter = rInner + SEG_OUTER * ep;
-    const dx = mx - hub.x, dy = my - hub.y;
-    const r = Math.sqrt(dx*dx + dy*dy);
-    if (r < rInner - 10 || r > rOuter + 15) return -1;
-    const angle = Math.atan2(dy, dx);
-    const halfSeg = ((SEG_DEG / 2) + 1) * Math.PI / 180;
-    for (let i = 0; i < COUNT; i++) {
-      let d = angle - itemAngle(i);
-      while (d > Math.PI) d -= 2*Math.PI;
-      while (d < -Math.PI) d += 2*Math.PI;
-      if (Math.abs(d) <= halfSeg) return i;
-    }
-    return -1;
-  }
-
-  root.addEventListener('mousemove', (e) => {
-    const rect = root.getBoundingClientRect();
-    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-    if (mx < 40 && !menuOpen) openMenu();
-    if (menuOpen) {
-      const hit = hitTest(mx, my);
-      if (hit >= 0 && hit !== activeIdx) { activeIdx = hit; drawFrame(); }
-      if (mx > HUB_R + SEG_INNER + SEG_OUTER + 60) closeMenu();
-    }
-  });
-  root.addEventListener('mouseleave', () => { if(menuOpen) closeMenu(); });
-  canvas.style.pointerEvents = 'auto';
-  canvas.addEventListener('click', (e) => {
-    if (!menuOpen) return;
-    const rect = root.getBoundingClientRect();
-    const hit = hitTest(e.clientX - rect.left, e.clientY - rect.top);
-    if (hit >= 0) { activeIdx = hit; drawFrame(); }
-  });
-  trigger.addEventListener('click', toggleMenu);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Tab') { e.preventDefault(); toggleMenu(); }
-    if (menuOpen) {
-      if (e.key==='ArrowDown'||e.key==='ArrowRight') { activeIdx=(activeIdx+1)%COUNT; drawFrame(); }
-      if (e.key==='ArrowUp'||e.key==='ArrowLeft') { activeIdx=(activeIdx-1+COUNT)%COUNT; drawFrame(); }
-      if (e.key==='Escape') closeMenu();
-    }
-  });
-
-  // FIX #2: use ResizeObserver so canvas always matches root size
-  new ResizeObserver(resizeCanvas).observe(root);
-  resizeCanvas();
-
-  // FIX #5: set date after null check, safely
-  const dateEl = document.getElementById('dateDisplay');
-  if (dateEl) {
-    const now = new Date();
-    dateEl.innerHTML = `DARK HOUR<br>${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  }
-})();
-</script>
+<script type="module" src="./js/main.js"></script>
 </body>
 </html>
