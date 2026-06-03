@@ -1,40 +1,54 @@
-import './style.css';
-
-import { HUB_R, SEG_INNER, SEG_OUTER } from './core/config.js';
-import { state }        from './core/state.js';
-import { createClock }  from './systems/clock.js';
-import { createMenu }   from './systems/menu.js';
-import { createCanvas } from './renderer/canvas.js';
+import { createCanvas } from './canvas.js';
 
 const root    = document.getElementById('main-root');
 const canvas  = document.getElementById('Neole17');
 const trigger = document.getElementById('triggerZone');
 if (!root || !canvas) throw new Error('Missing required DOM elements');
 
-createClock('dateDisplay');
+// ── Shared state ──────────────────────────────────────────────────────────────
+const state = {
+  menuOpen:       false,
+  progress:       0,
+  targetProgress: 0,
+  activeIdx:      0,
+  count:          3,
+  rafId:          null,
+};
 
+// ── Boot ──────────────────────────────────────────────────────────────────────
 const renderer = createCanvas(root, canvas, state);
-
-const menu = createMenu(state, {
-  onOpen:     () => renderer.startAnim(),
-  onClose:    () => renderer.startAnim(),
-  onNavigate: () => renderer.draw(),
-});
 
 new ResizeObserver(renderer.resize).observe(root);
 renderer.resize();
 
-// ── Example: load a background image on startup ───────────────────────────
-// Uncomment and change the path to your image:
-renderer.loadBgImage('/assets/images/sitebg_shatter.jpg');
+renderer.loadBgImage('./assets/images/sitebg_shatter.png');
+
+// ── Menu open/close ───────────────────────────────────────────────────────────
+function openMenu() {
+  if (state.menuOpen) return;
+  state.menuOpen       = true;
+  state.targetProgress = 1;
+  renderer.startAnim();
+}
+
+function closeMenu() {
+  if (!state.menuOpen) return;
+  state.menuOpen       = false;
+  state.targetProgress = 0;
+  renderer.startAnim();
+}
+
+function toggleMenu() { state.menuOpen ? closeMenu() : openMenu(); }
 
 // ── Events ────────────────────────────────────────────────────────────────────
+const HUB_R = 52, SEG_INNER = 14, SEG_OUTER = 150;
+
 root.addEventListener('mousemove', e => {
   const rect = root.getBoundingClientRect();
   const mx   = e.clientX - rect.left;
   const my   = e.clientY - rect.top;
 
-  if (mx < 40 && !state.menuOpen) { menu.open(); return; }
+  if (mx < 40 && !state.menuOpen) { openMenu(); return; }
 
   if (state.menuOpen) {
     const hit = renderer.hitTest(mx, my);
@@ -42,11 +56,11 @@ root.addEventListener('mousemove', e => {
       state.activeIdx = hit;
       renderer.draw();
     }
-    if (mx > HUB_R + SEG_INNER + SEG_OUTER + 70) menu.close();
+    if (mx > HUB_R + SEG_INNER + SEG_OUTER + 70) closeMenu();
   }
 });
 
-root.addEventListener('mouseleave', () => { if (state.menuOpen) menu.close(); });
+root.addEventListener('mouseleave', () => { if (state.menuOpen) closeMenu(); });
 
 canvas.style.pointerEvents = 'auto';
 canvas.addEventListener('click', e => {
@@ -56,17 +70,44 @@ canvas.addEventListener('click', e => {
   if (hit >= 0) {
     state.activeIdx = hit;
     renderer.draw();
-    // TODO: navigate to section based on ITEMS[hit]
+    // TODO: navigate to section based on hit (0=Portfolio, 1=About, 2=Contact)
   }
 });
 
-trigger.addEventListener('click', () => menu.toggle());
+trigger.addEventListener('click', toggleMenu);
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Tab') { e.preventDefault(); menu.toggle(); }
+  if (e.key === 'Tab') { e.preventDefault(); toggleMenu(); }
   if (state.menuOpen) {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') menu.navigateDown();
-    if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  menu.navigateUp();
-    if (e.key === 'Escape') menu.close();
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      state.activeIdx = (state.activeIdx + 1) % state.count;
+      renderer.draw();
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      state.activeIdx = (state.activeIdx - 1 + state.count) % state.count;
+      renderer.draw();
+    }
+    if (e.key === 'Escape') closeMenu();
   }
 });
+
+// ── Clock ─────────────────────────────────────────────────────────────────────
+const HOUR_NAMES = [
+  'Dark Hour',      'Hollow Hour',    'Grave Hour',     'Witching Hour',
+  'Bone Hour',      'False Hour',     'Pale Hour',      'Uneasy Hour',
+  'Waking Hour',    'Glass Hour',     'Ascendant Hour', 'Bright Hour',
+  'Zenith Hour',    'Verdict Hour',   'Haze Hour',      'Gold Hour',
+  'Shadow Hour',    'Fraying Hour',   'Threshold Hour', 'Ember Hour',
+  'Blue Hour',      'Velvet Hour',    'Dissolving Hour','Sleep Hour',
+];
+
+function updateClock() {
+  const el = document.getElementById('dateDisplay');
+  if (!el) return;
+  const now = new Date();
+  const hh  = String(now.getHours()).padStart(2, '0');
+  const mm  = String(now.getMinutes()).padStart(2, '0');
+  el.innerHTML = `${HOUR_NAMES[now.getHours()]}<br>${hh}:${mm}`;
+}
+updateClock();
+setInterval(updateClock, 30000);

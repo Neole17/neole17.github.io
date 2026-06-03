@@ -1,11 +1,83 @@
-import { ITEMS, HUB_R, SEG_INNER, SEG_OUTER, ANGLE_SPREAD, GAP_DEG } from '../core/config.js';
-import { ease, polarToCart } from '../core/utils.js';
-import { itemAngle, SHARD_SHAPES } from './shards.js';
+// ── Constants ─────────────────────────────────────────────────────────────────
+const ITEMS        = ['PORTFOLIO', 'ABOUT', 'CONTACT'];
+const HUB_R        = 52;
+const SEG_INNER    = 14;
+const SEG_OUTER    = 150;
+const ANGLE_SPREAD = 80;
+const GAP_DEG      = 5;
+const SEG_DEG      = (ANGLE_SPREAD / ITEMS.length) - GAP_DEG;
 
-const SEG_DEG = (ANGLE_SPREAD / ITEMS.length) - GAP_DEG;
+// ── Pure helpers ──────────────────────────────────────────────────────────────
+function ease(t) {
+  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3) / 2;
+}
 
+function polarToCart(hub, r, a) {
+  return { x: hub.x + r * Math.cos(a), y: hub.y + r * Math.sin(a) };
+}
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function itemAngle(i) {
+  const start = -ANGLE_SPREAD / 2;
+  const step  = ANGLE_SPREAD / ITEMS.length;
+  return (start + step * i + step / 2) * Math.PI / 180;
+}
+
+// ── Shard geometry (built once) ───────────────────────────────────────────────
+function buildShardShape(i) {
+  const rng     = mulberry32(i * 9999 + 1234);
+  const angle   = itemAngle(i);
+  const halfSeg = (SEG_DEG / 2) * Math.PI / 180;
+  const a1 = angle - halfSeg, a2 = angle + halfSeg;
+  const pts = [], rI = HUB_R + SEG_INNER, rO = rI + SEG_OUTER;
+
+  for (let s = 0; s <= 4; s++) {
+    const t = s / 4, r = rI + (rO - rI) * t;
+    pts.push({ r: r + (rng()-.5)*18, a: a1 + (rng()-.5)*.06 });
+  }
+  for (let s = 0; s <= 6; s++) {
+    const t = s / 6, a = a1 + (a2-a1)*t;
+    pts.push({ r: rO + (rng()-.5)*22, a: a + (rng()-.5)*.04 });
+  }
+  for (let s = 0; s <= 4; s++) {
+    const t = s / 4, r = rO + (rI-rO)*t;
+    pts.push({ r: r + (rng()-.5)*18, a: a2 + (rng()-.5)*.06 });
+  }
+  for (let s = 0; s <= 6; s++) {
+    const t = s / 6, a = a2 + (a1-a2)*t;
+    pts.push({ r: rI + (rng()-.5)*12, a: a + (rng()-.5)*.04 });
+  }
+
+  const hlPts = [
+    { r: rI + 6,             a: a1 + .01 },
+    { r: rI + 32 + rng()*16, a: a1 + .01 },
+    { r: rI + 18 + rng()*12, a: a1 + (a2-a1)*.35 },
+    { r: rI + 7,             a: a1 + (a2-a1)*.3 },
+  ];
+
+  const crackPts = [
+    { r: rI + (rO-rI)*.3 + (rng()-.5)*10, a: angle + (rng()-.5)*halfSeg*.6 },
+    { r: rI + (rO-rI)*.7 + (rng()-.5)*10, a: angle + (rng()-.5)*halfSeg*.4 },
+    { r: rO - rng()*20,                    a: angle + (rng()-.5)*halfSeg*.8 },
+  ];
+
+  return { pts, hlPts, crackPts };
+}
+
+const SHARD_SHAPES = ITEMS.map((_, i) => buildShardShape(i));
+
+// ── Canvas renderer ───────────────────────────────────────────────────────────
 export function createCanvas(root, canvas, state) {
   const ctx = canvas.getContext('2d');
+  let bgImage = null;
 
   function getHub() {
     return { x: -HUB_R + 18, y: root.offsetHeight / 2 };
@@ -26,6 +98,23 @@ export function createCanvas(root, canvas, state) {
     if (lw > 0) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); }
   }
 
+  function drawBackground(W, H) {
+    if (bgImage && bgImage.complete && bgImage.naturalWidth > 0) {
+      const scale = Math.max(W / bgImage.naturalWidth, H / bgImage.naturalHeight);
+      const dw = bgImage.naturalWidth  * scale;
+      const dh = bgImage.naturalHeight * scale;
+      ctx.drawImage(bgImage, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    } else {
+      const bg = ctx.createLinearGradient(0, 0, W, H);
+      bg.addColorStop(0,  '#020818');
+      bg.addColorStop(.4, '#041040');
+      bg.addColorStop(.7, '#0a2060');
+      bg.addColorStop(1,  '#0d3080');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
   function drawHub(hub, ep) {
     ctx.save(); ctx.globalAlpha = Math.min(1, ep * 1.5);
     ctx.beginPath(); ctx.arc(hub.x, hub.y, HUB_R, 0, Math.PI * 2);
@@ -37,8 +126,8 @@ export function createCanvas(root, canvas, state) {
     for (let t = 0; t < 12; t++) {
       const ta = (t / 12) * Math.PI * 2;
       ctx.beginPath();
-      ctx.moveTo(hub.x + (HUB_R - 10) * Math.cos(ta), hub.y + (HUB_R - 10) * Math.sin(ta));
-      ctx.lineTo(hub.x + (HUB_R -  4) * Math.cos(ta), hub.y + (HUB_R -  4) * Math.sin(ta));
+      ctx.moveTo(hub.x + (HUB_R-10)*Math.cos(ta), hub.y + (HUB_R-10)*Math.sin(ta));
+      ctx.lineTo(hub.x + (HUB_R- 4)*Math.cos(ta), hub.y + (HUB_R- 4)*Math.sin(ta));
       ctx.strokeStyle = 'rgba(100,200,255,.3)'; ctx.lineWidth = 1; ctx.stroke();
     }
     ctx.restore();
@@ -54,14 +143,14 @@ export function createCanvas(root, canvas, state) {
 
       ctx.save();
       drawPoly(hub, sh.pts, ep,
-        isActive ? `rgba(160,50,0,${.72 + ep * .15})` : `rgba(0,40,120,${.62 + ep * .1})`,
+        isActive ? `rgba(160,50,0,${.72+ep*.15})` : `rgba(0,40,120,${.62+ep*.1})`,
         isActive ? 'rgba(255,130,60,.9)' : 'rgba(70,170,255,.55)',
         isActive ? 2 : 1);
       ctx.globalAlpha = ep * (isActive ? .6 : .32);
       drawPoly(hub, sh.hlPts, ep,
         isActive ? 'rgba(255,220,180,.65)' : 'rgba(180,230,255,.55)', '', 0);
       ctx.globalAlpha = ep * .25;
-      const cs = sh.crackPts.map(p => polarToCart(hub, rI + (p.r - rI) * ep, p.a));
+      const cs = sh.crackPts.map(p => polarToCart(hub, rI + (p.r-rI)*ep, p.a));
       if (cs.length >= 2) {
         ctx.beginPath(); ctx.moveTo(cs[0].x, cs[0].y);
         for (let k = 1; k < cs.length; k++) ctx.lineTo(cs[k].x, cs[k].y);
@@ -71,101 +160,49 @@ export function createCanvas(root, canvas, state) {
       ctx.restore();
 
       if (ep > .4) {
-        const la   = Math.min(1, (ep - .4) / .3);
-        const midR = rI + (rO - rI) * .5;
+        const la   = Math.min(1, (ep-.4)/.3);
+        const midR = rI + (rO-rI) * .5;
         ctx.save(); ctx.globalAlpha = la;
         ctx.font         = `700 ${isActive ? 14 : 12}px Orbitron, sans-serif`;
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle    = isActive ? '#fff' : 'rgba(160,220,255,.9)';
         if (isActive) { ctx.shadowColor = 'rgba(255,140,60,.9)'; ctx.shadowBlur = 12; }
-        ctx.fillText(label, hub.x + midR * Math.cos(angle), hub.y + midR * Math.sin(angle));
+        ctx.fillText(label, hub.x + midR*Math.cos(angle), hub.y + midR*Math.sin(angle));
         ctx.restore();
       }
 
       if (isActive && ep > .75) {
-        const aa = (ep - .75) / .25;
+        const aa = (ep-.75)/.25;
         ctx.save(); ctx.globalAlpha = aa; ctx.fillStyle = '#ff9060';
         ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('▶', hub.x + (rO + 14) * Math.cos(angle), hub.y + (rO + 14) * Math.sin(angle));
+        ctx.fillText('▶', hub.x + (rO+14)*Math.cos(angle), hub.y + (rO+14)*Math.sin(angle));
         ctx.restore();
       }
     });
   }
 
-  // ── Background image drawing ──────────────────────────────────────────────
-  // bgImage is an HTMLImageElement set via loadBgImage() below.
-  // It is drawn to fill the canvas before everything else.
-  let bgImage = null;
-
-  function drawBackground(W, H) {
-    if (bgImage && bgImage.complete) {
-      // cover-fit: scale the image so it fills the canvas, cropping if needed
-      const scale = Math.max(W / bgImage.naturalWidth, H / bgImage.naturalHeight);
-      const dw    = bgImage.naturalWidth  * scale;
-      const dh    = bgImage.naturalHeight * scale;
-      const dx    = (W - dw) / 2;
-      const dy    = (H - dh) / 2;
-      ctx.drawImage(bgImage, dx, dy, dw, dh);
-    } else {
-      // fallback: gradient
-      const bg = ctx.createLinearGradient(0, 0, W, H);
-      bg.addColorStop(0,   '#020818');
-      bg.addColorStop(.4,  '#041040');
-      bg.addColorStop(.7,  '#0a2060');
-      bg.addColorStop(1,   '#0d3080');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, W, H);
-    }
-  }
-
-  // ── Public: load a background image by URL ───────────────────────────────
-  // Usage: renderer.loadBgImage('/assets/images/mybackground.jpg')
-  // Or swap at runtime: renderer.loadBgImage(newUrl)
-  function loadBgImage(src) {
-    const img = new Image();
-    img.onload = () => {
-  bgImage = img;
-  requestAnimationFrame(draw);
-};
-    img.onerror = () => { console.warn('Could not load image:', src); bgImage = null; draw(); };
-    img.src = src;
-  }
-
-  // Clear the background image and fall back to the gradient
-  function clearBgImage() {
-    bgImage = null;
-    draw();
-  }
-
-  // ── Master draw ─────────────────────────────────────────────────────────────
   function draw() {
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
     const hub    = getHub();
     const menuEp = ease(state.progress);
-
     drawBackground(W, H);
-    if (menuEp > 0)       drawHub(hub, menuEp);
+    if (menuEp > 0)            drawHub(hub, menuEp);
     if (state.progress > .005) drawMenuShards(hub, menuEp);
   }
 
-function resize() {
-  const dpr = window.devicePixelRatio || 1;
-
-  const w = root.offsetWidth;
-  const h = root.offsetHeight;
-
-  canvas.width  = w * dpr;
-  canvas.height = h * dpr;
-
-  canvas.style.width  = w + 'px';
-  canvas.style.height = h + 'px';
-
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  draw();
-}
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const w   = root.offsetWidth;
+    const h   = root.offsetHeight;
+    canvas.width        = w * dpr;
+    canvas.height       = h * dpr;
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
 
   function animate() {
     const diff = state.targetProgress - state.progress;
@@ -188,8 +225,8 @@ function resize() {
     const ep      = ease(state.progress);
     const rI      = HUB_R + SEG_INNER;
     const rO      = rI + SEG_OUTER * ep;
-    const dx      = mx - hub.x, dy = my - hub.y;
-    const r       = Math.sqrt(dx * dx + dy * dy);
+    const dx = mx - hub.x, dy = my - hub.y;
+    const r  = Math.sqrt(dx*dx + dy*dy);
     if (r < rI - 10 || r > rO + 15) return -1;
     const angle   = Math.atan2(dy, dx);
     const segHalf = ((SEG_DEG / 2) + 1) * Math.PI / 180;
@@ -201,6 +238,15 @@ function resize() {
     }
     return -1;
   }
+
+  function loadBgImage(src) {
+    const img = new Image();
+    img.onload  = () => { bgImage = img; draw(); };
+    img.onerror = () => { console.warn('Could not load image:', src); };
+    img.src = src;
+  }
+
+  function clearBgImage() { bgImage = null; draw(); }
 
   return { draw, resize, startAnim, hitTest, loadBgImage, clearBgImage };
 }
