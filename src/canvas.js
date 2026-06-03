@@ -124,7 +124,10 @@ export function createCanvas(root, canvas, state) {
   // Or swap at runtime: renderer.loadBgImage(newUrl)
   function loadBgImage(src) {
     const img = new Image();
-    img.onload  = () => { bgImage = img; draw(); };
+    img.onload = () => {
+  bgImage = img;
+  requestAnimationFrame(draw);
+};
     img.onerror = () => { console.warn('Could not load image:', src); bgImage = null; draw(); };
     img.src = src;
   }
@@ -147,11 +150,22 @@ export function createCanvas(root, canvas, state) {
     if (state.progress > .005) drawMenuShards(hub, menuEp);
   }
 
-  function resize() {
-    canvas.width  = root.offsetWidth;
-    canvas.height = root.offsetHeight;
-    draw();
-  }
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+
+  const w = root.offsetWidth;
+  const h = root.offsetHeight;
+
+  canvas.width  = w * dpr;
+  canvas.height = h * dpr;
+
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  draw();
+}
 
   function animate() {
     const diff = state.targetProgress - state.progress;
