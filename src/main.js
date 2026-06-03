@@ -26,7 +26,7 @@ renderer.resize();
 
 // ── Example: load a background image on startup ───────────────────────────
 // Uncomment and change the path to your image:
-// renderer.loadBgImage('/assets/images/background.jpg');
+renderer.loadBgImage('/assets/images/sitebg_shatter.jpg');
 
 // ── Events ────────────────────────────────────────────────────────────────────
 root.addEventListener('mousemove', e => {
