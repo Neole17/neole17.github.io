@@ -183,7 +183,9 @@ export function createCanvas(root, canvas, state) {
   }
 
   function draw() {
-    const W = canvas.width, H = canvas.height;
+    // Use logical (CSS) size — ctx.setTransform(dpr) already handles pixel scaling
+    const W = root.offsetWidth;
+    const H = root.offsetHeight;
     ctx.clearRect(0, 0, W, H);
     const hub    = getHub();
     const menuEp = ease(state.progress);
