@@ -7,7 +7,7 @@ import { createMenu }   from './systems/menu.js';
 import { createCanvas } from './renderer/canvas.js';
 
 const root    = document.getElementById('main-root');
-const canvas  = document.getElementById('radial-canvas');
+const canvas  = document.getElementById('Neole17');
 const trigger = document.getElementById('triggerZone');
 if (!root || !canvas) throw new Error('Missing required DOM elements');
 
