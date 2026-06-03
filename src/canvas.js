@@ -182,10 +182,10 @@ export function createCanvas(root, canvas, state) {
     });
   }
 
+  // ── Master draw ───────────────────────────────────────────────────────────
   function draw() {
-    // Use logical (CSS) size — ctx.setTransform(dpr) already handles pixel scaling
-    const W = root.offsetWidth;
-    const H = root.offsetHeight;
+    const W = canvas.width;
+    const H = canvas.height;
     ctx.clearRect(0, 0, W, H);
     const hub    = getHub();
     const menuEp = ease(state.progress);
@@ -194,15 +194,10 @@ export function createCanvas(root, canvas, state) {
     if (state.progress > .005) drawMenuShards(hub, menuEp);
   }
 
+  // ── Resize: simple 1:1 mapping, no DPR scaling ───────────────────────────
   function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    const w   = root.offsetWidth;
-    const h   = root.offsetHeight;
-    canvas.width        = w * dpr;
-    canvas.height       = h * dpr;
-    canvas.style.width  = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    canvas.width  = root.offsetWidth;
+    canvas.height = root.offsetHeight;
     draw();
   }
 
