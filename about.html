@@ -288,7 +288,7 @@
 
       <p class="bio-text" style="font-size:13px;color:#666;line-height:1.7;">
         <!-- Short tagline or role description -->
-        Illustrator · Developer · Gamer
+        Designer · Developer · Creator
       </p>
 
       <!--
@@ -364,6 +364,72 @@
 </div>
 
 <script>
+  // ── Diamond explosion transition ────────────────────────────────────────────
+  (function() {
+    const COLORS = ['#111','#333','#555','#222','#000'];
+
+    function spawnDiamonds(originX, originY, cb) {
+      const COUNT = 28;
+      const container = document.createElement('div');
+      container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;';
+      document.body.appendChild(container);
+
+      let done = 0;
+      for (let i = 0; i < COUNT; i++) {
+        const d = document.createElement('div');
+        const size  = 18 + Math.random() * 52;
+        const angle = Math.random() * 360;
+        const dist  = 80 + Math.random() * Math.max(window.innerWidth, window.innerHeight) * 0.9;
+        const rad   = angle * Math.PI / 180;
+        const tx    = Math.cos(rad) * dist;
+        const ty    = Math.sin(rad) * dist;
+        const rot   = Math.random() * 360;
+        const delay = Math.random() * 120;
+        const dur   = 320 + Math.random() * 200;
+        const col   = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+        d.style.cssText = [
+          'position:absolute',
+          'left:' + (originX - size/2) + 'px',
+          'top:'  + (originY - size/2) + 'px',
+          'width:'  + size + 'px',
+          'height:' + size + 'px',
+          'background:' + col,
+          "clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%)",
+          'opacity:1',
+          'transform:translate(0,0) rotate(' + rot + 'deg) scale(1)',
+          'transition:transform ' + dur + 'ms cubic-bezier(.2,.8,.4,1) ' + delay + 'ms,opacity ' + (dur*0.6) + 'ms ease ' + (delay+dur*0.4) + 'ms'
+        ].join(';');
+        container.appendChild(d);
+
+        requestAnimationFrame(function() { requestAnimationFrame(function() {
+          d.style.transform = 'translate(' + tx + 'px,' + ty + 'px) rotate(' + (rot+180) + 'deg) scale(0.1)';
+          d.style.opacity = '0';
+        }); });
+
+        (function(total) {
+          setTimeout(function() {
+            done++;
+            if (done === COUNT) { container.remove(); if (cb) cb(); }
+          }, total);
+        })(dur + delay + 50);
+      }
+    }
+
+    document.querySelectorAll('.nav-item').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        var href = this.getAttribute('href');
+        if (!href || href === '#') return;
+        e.preventDefault();
+        var rect = this.getBoundingClientRect();
+        spawnDiamonds(rect.left + rect.width/2, rect.top + rect.height/2, function() {
+          window.location.href = href;
+        });
+      });
+    });
+  })();
+
+
   // ── Diagonal slash ──────────────────────────────────────────────────────────
   function positionSlash() {
     const W = window.innerWidth, H = window.innerHeight;
