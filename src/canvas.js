@@ -1,4 +1,4 @@
-// ── Constants ─────────────────────────────────────────────────────────────────
+// Constants
 const ITEMS        = ['PORTFOLIO', 'ABOUT', 'CONTACT'];
 const HUB_R        = 52;
 const SEG_INNER    = 14;
@@ -7,7 +7,6 @@ const ANGLE_SPREAD = 80;
 const GAP_DEG      = 5;
 const SEG_DEG      = (ANGLE_SPREAD / ITEMS.length) - GAP_DEG;
 
-// ── Pure helpers ──────────────────────────────────────────────────────────────
 function ease(t) {
   return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3) / 2;
 }
@@ -31,7 +30,6 @@ function itemAngle(i) {
   return (start + step * i + step / 2) * Math.PI / 180;
 }
 
-// ── Shard geometry (built once) ───────────────────────────────────────────────
 function buildShardShape(i) {
   const rng     = mulberry32(i * 9999 + 1234);
   const angle   = itemAngle(i);
@@ -74,13 +72,13 @@ function buildShardShape(i) {
 
 const SHARD_SHAPES = ITEMS.map((_, i) => buildShardShape(i));
 
-// ── Canvas renderer ───────────────────────────────────────────────────────────
 export function createCanvas(root, canvas, state) {
   const ctx = canvas.getContext('2d');
   let bgImage = null;
+  let canvasW = 0, canvasH = 0;
 
   function getHub() {
-    return { x: -HUB_R + 18, y: root.offsetHeight / 2 };
+    return { x: -HUB_R + 18, y: canvasH / 2 };
   }
 
   function drawPoly(hub, pts, ep, fill, stroke, lw) {
@@ -98,20 +96,22 @@ export function createCanvas(root, canvas, state) {
     if (lw > 0) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); }
   }
 
-  function drawBackground(W, H) {
+  function drawBackground() {
     if (bgImage && bgImage.complete && bgImage.naturalWidth > 0) {
-      const scale = Math.max(W / bgImage.naturalWidth, H / bgImage.naturalHeight);
+      const scale = Math.max(canvasW / bgImage.naturalWidth, canvasH / bgImage.naturalHeight);
       const dw = bgImage.naturalWidth  * scale;
       const dh = bgImage.naturalHeight * scale;
-      ctx.drawImage(bgImage, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      const dx = (canvasW - dw) / 2;
+      const dy = (canvasH - dh) / 2;
+      ctx.drawImage(bgImage, dx, dy, dw, dh);
     } else {
-      const bg = ctx.createLinearGradient(0, 0, W, H);
+      const bg = ctx.createLinearGradient(0, 0, canvasW, canvasH);
       bg.addColorStop(0,  '#020818');
       bg.addColorStop(.4, '#041040');
       bg.addColorStop(.7, '#0a2060');
       bg.addColorStop(1,  '#0d3080');
       ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, W, H);
+      ctx.fillRect(0, 0, canvasW, canvasH);
     }
   }
 
@@ -182,22 +182,24 @@ export function createCanvas(root, canvas, state) {
     });
   }
 
-  // ── Master draw ───────────────────────────────────────────────────────────
   function draw() {
-    const W = canvas.width;
-    const H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
+    ctx.clearRect(0, 0, canvasW, canvasH);
     const hub    = getHub();
     const menuEp = ease(state.progress);
-    drawBackground(W, H);
+    drawBackground();
     if (menuEp > 0)            drawHub(hub, menuEp);
     if (state.progress > .005) drawMenuShards(hub, menuEp);
   }
 
-  // ── Resize: simple 1:1 mapping, no DPR scaling ───────────────────────────
+  // Only resize when dimensions actually change; never called from draw()
   function resize() {
-    canvas.width  = root.offsetWidth;
-    canvas.height = root.offsetHeight;
+    const w = root.offsetWidth;
+    const h = root.offsetHeight;
+    if (w === canvasW && h === canvasH) return;
+    canvasW = w;
+    canvasH = h;
+    canvas.width  = w;
+    canvas.height = h;
     draw();
   }
 

@@ -22,9 +22,9 @@ const state = {
 // ── Renderer ──────────────────────────────────────────────────────────────────
 const renderer = createCanvas(root, canvas, state);
 
-// Observe the document root, not the canvas parent, to avoid resize feedback loop
-new ResizeObserver(() => renderer.resize()).observe(document.documentElement);
+
 renderer.resize();
+window.addEventListener('resize', () => renderer.resize());
 
 renderer.loadBgImage('./assets/images/sitebg_shatter.png');
 
