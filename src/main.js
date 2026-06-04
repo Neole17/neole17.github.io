@@ -1,9 +1,13 @@
 import { createCanvas } from './canvas.js';
+import { initClock }    from './clock.js';
 
 const root    = document.getElementById('main-root');
 const canvas  = document.getElementById('Neole17');
 const trigger = document.getElementById('triggerZone');
 if (!root || !canvas) throw new Error('Missing required DOM elements');
+
+// ── Clock (creates its own DOM element) ───────────────────────────────────────
+initClock();
 
 // ── Shared state ──────────────────────────────────────────────────────────────
 const state = {
@@ -15,15 +19,18 @@ const state = {
   rafId:          null,
 };
 
-// ── Boot ──────────────────────────────────────────────────────────────────────
+// ── Renderer ──────────────────────────────────────────────────────────────────
 const renderer = createCanvas(root, canvas, state);
 
-new ResizeObserver(renderer.resize).observe(root);
+// Observe the document root, not the canvas parent, to avoid resize feedback loop
+new ResizeObserver(() => renderer.resize()).observe(document.documentElement);
 renderer.resize();
 
 renderer.loadBgImage('./assets/images/sitebg_shatter.png');
 
-// ── Menu open/close ───────────────────────────────────────────────────────────
+// ── Menu helpers ──────────────────────────────────────────────────────────────
+const HUB_R = 52, SEG_INNER = 14, SEG_OUTER = 150;
+
 function openMenu() {
   if (state.menuOpen) return;
   state.menuOpen       = true;
@@ -41,8 +48,6 @@ function closeMenu() {
 function toggleMenu() { state.menuOpen ? closeMenu() : openMenu(); }
 
 // ── Events ────────────────────────────────────────────────────────────────────
-const HUB_R = 52, SEG_INNER = 14, SEG_OUTER = 150;
-
 root.addEventListener('mousemove', e => {
   const rect = root.getBoundingClientRect();
   const mx   = e.clientX - rect.left;
@@ -70,7 +75,7 @@ canvas.addEventListener('click', e => {
   if (hit >= 0) {
     state.activeIdx = hit;
     renderer.draw();
-    // TODO: navigate to section based on hit (0=Portfolio, 1=About, 2=Contact)
+    // TODO: navigate to section (0=Portfolio, 1=About, 2=Contact)
   }
 });
 
@@ -90,24 +95,3 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeMenu();
   }
 });
-
-// ── Clock ─────────────────────────────────────────────────────────────────────
-const HOUR_NAMES = [
-  'Dark Hour',      'Hollow Hour',    'Grave Hour',     'Witching Hour',
-  'Bone Hour',      'False Hour',     'Pale Hour',      'Uneasy Hour',
-  'Waking Hour',    'Glass Hour',     'Ascendant Hour', 'Bright Hour',
-  'Zenith Hour',    'Verdict Hour',   'Haze Hour',      'Gold Hour',
-  'Shadow Hour',    'Fraying Hour',   'Threshold Hour', 'Ember Hour',
-  'Blue Hour',      'Velvet Hour',    'Dissolving Hour','Sleep Hour',
-];
-
-function updateClock() {
-  const el = document.getElementById('dateDisplay');
-  if (!el) return;
-  const now = new Date();
-  const hh  = String(now.getHours()).padStart(2, '0');
-  const mm  = String(now.getMinutes()).padStart(2, '0');
-  el.innerHTML = `${HOUR_NAMES[now.getHours()]}<br>${hh}:${mm}`;
-}
-updateClock();
-setInterval(updateClock, 30000);

@@ -14,9 +14,13 @@ html, body {
   overflow: hidden;
 }
 
+/* Explicit 100%/100% prevents the canvas attribute resize from causing reflow */
 #Neole17 {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
   z-index: 10;
 }
 
@@ -38,4 +42,5 @@ html, body {
   color: rgba(100,200,255,0.5);
   text-align: right;
   pointer-events: none;
+  line-height: 1.6;
 }
