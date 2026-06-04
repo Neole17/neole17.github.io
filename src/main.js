@@ -75,7 +75,8 @@ canvas.addEventListener('click', e => {
   if (hit >= 0) {
     state.activeIdx = hit;
     renderer.draw();
-    // TODO: navigate to section (0=Portfolio, 1=About, 2=Contact)
+    const pages = ['./portfolio.html', './about.html', './contact.html'];
+    if (pages[hit]) window.location.href = pages[hit];
   }
 });
 

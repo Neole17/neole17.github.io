@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #fff;
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* ── Page root ─────────────────────────────────────────────────── */
+    #about-root {
+      width: 100vw; height: 100vh;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Diagonal slash overlay ────────────────────────────────────── */
+    #slash {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* ── Header nav ────────────────────────────────────────────────── */
+    #header {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #111;
+      text-decoration: none;
+      padding: 0 28px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-right: 1px solid rgba(0,0,0,0.12);
+      transition: background 0.15s, color 0.15s;
+      cursor: pointer;
+    }
+    .nav-item:first-child { border-left: none; }
+    .nav-item:hover { background: #111; color: #fff; }
+    .nav-item.active {
+      background: #111;
+      color: #fff;
+    }
+
+    /* thin line under header */
+    #header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1.5px;
+      background: #111;
+    }
+
+    /* ── Main content area ─────────────────────────────────────────── */
+    #content {
+      position: relative;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 2px 1.4fr 1.5px 1fr;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    /* ── Left panel: name + bio intro + CV ────────────────────────── */
+    #panel-left {
+      padding: 48px 36px 36px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 28px;
+      position: relative;
+    }
+
+    .about-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 900;
+      color: #111;
+      letter-spacing: 4px;
+      line-height: 1;
+      position: relative;
+    }
+    /* Decorative swoosh lines under title — pure CSS */
+    .about-title::after {
+      content: '';
+      display: block;
+      margin-top: 10px;
+      width: 80%;
+      height: 2px;
+      background: #111;
+      clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 60%);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: #555;
+      text-transform: uppercase;
+    }
+
+    .cv-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #111;
+      text-decoration: none;
+      border: 1.5px solid #111;
+      padding: 10px 22px;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.15s, color 0.15s;
+      align-self: flex-start;
+      margin-top: auto;
+    }
+    .cv-btn:hover { background: #111; color: #fff; }
+    .cv-btn::before {
+      content: '↓';
+      font-size: 14px;
+    }
+
+    /* ── Dividers ──────────────────────────────────────────────────── */
+    .divider {
+      background: #111;
+      width: 1.5px;
+      align-self: stretch;
+      margin: 24px 0;
+      opacity: 0.2;
+    }
+
+    /* ── Center panel: bio text ────────────────────────────────────── */
+    #panel-center {
+      padding: 48px 40px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 18px;
+      overflow-y: auto;
+    }
+
+    .bio-section-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 4px;
+    }
+
+    .bio-text {
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.85;
+      color: #222;
+      /* wavy underline hint via border-bottom on paragraphs */
+    }
+
+    .bio-text p {
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+    .bio-text p:last-child { border-bottom: none; }
+
+    /* ── Right panel: character art ────────────────────────────────── */
+    #panel-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /*
+      ── CHARACTER ART SLOT ─────────────────────────────────────────
+      Drop your image file into: assets/images/about-character.png
+      (or .jpg / .webp — just update the src below in the <img> tag)
+      The image is positioned to fill the panel, top-aligned.
+    */
+    #character-img {
+      position: absolute;
+      top: 0; right: 0;
+      height: 100%;
+      width: auto;
+      max-width: 160%;
+      object-fit: contain;
+      object-position: top right;
+      opacity: 0.88;
+    }
+
+    /* placeholder shown when image is absent */
+    #char-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #ccc;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* ── Diagonal slash SVG ────────────────────────────────────────── */
+    /* drawn via JS to always match viewport */
+
+    /* ── Corner brackets ───────────────────────────────────────────── */
+    .corner { position: absolute; z-index: 25; pointer-events: none; }
+    .corner.tl { top: 56px; left: 8px; }
+    .corner.tr { top: 56px; right: 8px; }
+    .corner.bl { bottom: 8px; left: 8px; }
+    .corner.br { bottom: 8px; right: 8px; }
+
+    /* ── Clock ─────────────────────────────────────────────────────── */
+    #dateDisplay {
+      position: absolute;
+      bottom: 16px; right: 20px;
+      z-index: 30;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(0,0,0,0.25);
+      text-align: right;
+      pointer-events: none;
+      line-height: 1.6;
+    }
+
+    /* ── Page-in animation ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #panel-left  { animation: fadeUp .4s ease both .05s; }
+    #panel-center{ animation: fadeUp .4s ease both .12s; }
+    #panel-right { animation: fadeUp .4s ease both .2s; }
+  </style>
+</head>
+<body>
+<div id="about-root">
+
+  <!-- Header nav -->
+  <nav id="header">
+    <a class="nav-item" href="./index.html">HOME</a>
+    <a class="nav-item" href="./portfolio.html">PORTFOLIO</a>
+    <a class="nav-item active" href="#">ABOUT</a>
+    <a class="nav-item" href="./contact.html">CONTACT</a>
+  </nav>
+
+  <!-- Content grid -->
+  <div id="content">
+
+    <!-- Left: title + CV -->
+    <div id="panel-left">
+      <div>
+        <div class="about-title">ABOUT</div>
+        <div class="subtitle" style="margin-top:14px;">Your Name / Handle</div>
+      </div>
+
+      <p class="bio-text" style="font-size:13px;color:#666;line-height:1.7;">
+        <!-- Short tagline or role description -->
+        Illustrator · Developer · Gamer
+      </p>
+
+      <!--
+        CV button — point href at your CV file, e.g.:
+        href="./assets/cv.pdf"
+      -->
+      <a class="cv-btn" href="#" download>CV</a>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Center: bio paragraphs -->
+    <div id="panel-center">
+      <div class="bio-section-label">Biography</div>
+      <div class="bio-text">
+        <!--
+          Replace these paragraphs with your actual bio.
+          Each <p> gets a faint separator line automatically.
+        -->
+        <p>
+          Write your first paragraph here. This could be a short introduction —
+          who you are, where you're based, what drives your work.
+        </p>
+        <p>
+          A second paragraph about your background, skills, or interests.
+          Keep it conversational.
+        </p>
+        <p>
+          A third paragraph if needed — current focus, ongoing projects,
+          or anything else you want visitors to know.
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Right: character art -->
+    <div id="panel-right">
+      <!--
+        DROP YOUR IMAGE HERE:
+        Save your character art as: assets/images/about-character.png
+        Then update the src attribute below.
+        The placeholder text disappears automatically once the image loads.
+      -->
+      <img
+        id="character-img"
+        src="./assets/images/about-character.png"
+        alt="character"
+        onerror="this.style.display='none'; document.getElementById('char-placeholder').style.display='flex';"
+      />
+      <div id="char-placeholder" style="display:none;">
+        [ drop your character art here ]<br>
+        assets/images/about-character.png
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Diagonal slash line matching the sketch -->
+  <svg id="slash" xmlns="http://www.w3.org/2000/svg">
+    <line id="slash-line" stroke="#111" stroke-width="1.5" opacity="0.15"/>
+  </svg>
+
+  <!-- Corner brackets -->
+  <div class="corner tl"><svg width="24" height="24" fill="none"><polyline points="0,24 0,0 24,0" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+  <div class="corner tr"><svg width="24" height="24" fill="none"><polyline points="0,0 24,0 24,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+  <div class="corner bl"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/><polyline points="0,0 0,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+  <div class="corner br"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24 24,0" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+
+  <!-- Clock -->
+  <div id="dateDisplay"></div>
+
+</div>
+
+<script>
+  // ── Diagonal slash ──────────────────────────────────────────────────────────
+  function positionSlash() {
+    const W = window.innerWidth, H = window.innerHeight;
+    const line = document.getElementById('slash-line');
+    // runs from ~33% across the top to ~40% across the bottom, matching sketch
+    line.setAttribute('x1', W * 0.33);
+    line.setAttribute('y1', 48);
+    line.setAttribute('x2', W * 0.40);
+    line.setAttribute('y2', H);
+  }
+  positionSlash();
+  window.addEventListener('resize', positionSlash);
+
+  // ── Clock ───────────────────────────────────────────────────────────────────
+  const HOUR_NAMES = [
+    'Dark Hour','Hollow Hour','Grave Hour','Witching Hour',
+    'Bone Hour','False Hour','Pale Hour','Uneasy Hour',
+    'Waking Hour','Glass Hour','Ascendant Hour','Bright Hour',
+    'Zenith Hour','Verdict Hour','Haze Hour','Gold Hour',
+    'Shadow Hour','Fraying Hour','Threshold Hour','Ember Hour',
+    'Blue Hour','Velvet Hour','Dissolving Hour','Sleep Hour',
+  ];
+  function updateClock() {
+    const el  = document.getElementById('dateDisplay');
+    const now = new Date();
+    const hh  = String(now.getHours()).padStart(2,'0');
+    const mm  = String(now.getMinutes()).padStart(2,'0');
+    el.innerHTML = `${HOUR_NAMES[now.getHours()]}<br>${hh}:${mm}`;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+</script>
+</body>
+</html>
