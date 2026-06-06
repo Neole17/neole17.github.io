@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #f5f3ef;
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+      color: #1a1a1a;
+    }
+
+    /* ── Root layout ───────────────────────────────────────────────── */
+    #portfolio-root {
+      width: 100vw; height: 100vh;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Parallax background ───────────────────────────────────────── */
+    #bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    #bg-layer img {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: auto;
+      min-width: 100%;
+      object-fit: cover;
+      opacity: 0.08;
+      filter: none;
+      /* background moves at 30% the speed of content — set via JS */
+      will-change: transform;
+      transition: transform 0.05s linear;
+    }
+
+    /* ── Left tab sidebar ──────────────────────────────────────────── */
+    #sidebar {
+      position: relative;
+      z-index: 30;
+      flex-shrink: 0;
+      width: 56px;
+      height: 100vh;
+      background: rgba(245,243,239,0.95);
+      border-right: 1px solid rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 0 20px;
+      gap: 4px;
+    }
+
+    /* Year tab buttons — vertical text */
+    .year-tab {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: rgba(0,0,0,0.25);
+      cursor: pointer;
+      padding: 16px 8px;
+      border: none;
+      background: transparent;
+      transition: color 0.2s, background 0.2s;
+      border-left: 2px solid transparent;
+      width: 100%;
+      text-align: center;
+    }
+    .year-tab:hover {
+      color: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.04);
+    }
+    .year-tab.active {
+      color: #111;
+      border-left-color: #111;
+      background: rgba(0,0,0,0.06);
+    }
+
+    /* Sidebar nav links at bottom */
+    #sidebar-nav {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      width: 100%;
+    }
+    .sidebar-nav-item {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: rgba(0,0,0,0.25);
+      text-decoration: none;
+      padding: 10px 8px;
+      transition: color 0.2s;
+    }
+    .sidebar-nav-item:hover { color: rgba(0,0,0,0.7); }
+    .sidebar-nav-item.active { color: rgba(0,0,0,0.4); cursor: default; }
+
+    /* ── Main scroll area ──────────────────────────────────────────── */
+    #scroll-area {
+      position: relative;
+      z-index: 20;
+      flex: 1;
+      height: 100vh;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      /* hide scrollbar but keep scroll */
+      scrollbar-width: none;
+    }
+    #scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── Inner track: all year sections side by side ───────────────── */
+    #scroll-track {
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+      width: max-content;
+    }
+
+    /* ── Year section ──────────────────────────────────────────────── */
+    .year-section {
+      width: 100vw;       /* each year = one screen width */
+      min-width: 800px;
+      height: 100vh;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 48px 48px 32px;
+      position: relative;
+    }
+
+    /* ── Year label ────────────────────────────────────────────────── */
+    .year-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      letter-spacing: 8px;
+      color: rgba(0,0,0,0.05);
+      position: absolute;
+      top: 20px; right: 40px;
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+    }
+
+    /* ── Year heading ──────────────────────────────────────────────── */
+    .year-heading {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      color: #111;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .year-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.2), transparent);
+    }
+
+    .year-count {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: rgba(0,0,0,0.3);
+      margin-bottom: 28px;
+    }
+
+    /* ── Image grid ────────────────────────────────────────────────── */
+    .img-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-auto-rows: 1fr;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    /* ── Grid item ─────────────────────────────────────────────────── */
+    .grid-item {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.08);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .grid-item:hover {
+      border-color: rgba(0,0,0,0.25);
+      transform: scale(1.015);
+      z-index: 2;
+    }
+    .grid-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.3s;
+    }
+
+    /* Caption overlay on hover */
+    .grid-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 10px 12px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.9);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .grid-item:hover .grid-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Placeholder for empty slots */
+    .grid-item.placeholder {
+      cursor: default;
+      opacity: 0.35;
+    }
+    .grid-item.placeholder::after {
+      content: attr(data-label);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(0,0,0,0.2);
+    }
+    .grid-item.placeholder img { display: none; }
+
+    /* Vertical section divider */
+    .section-divider {
+      width: 1px;
+      height: 100vh;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.12) 80%, transparent);
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    /* ── Lightbox ──────────────────────────────────────────────────── */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    #lightbox.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #lightbox-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      cursor: pointer;
+    }
+    #lightbox-img-wrap {
+      position: relative;
+      z-index: 2;
+      max-width: 82vw;
+      max-height: 82vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #lightbox-img {
+      max-width: 82vw;
+      max-height: 82vh;
+      object-fit: contain;
+      display: block;
+      border: 1px solid rgba(0,0,0,0.15);
+      box-shadow: 0 0 80px rgba(0,0,0,0.8);
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(.2,1,.4,1);
+    }
+    #lightbox.open #lightbox-img {
+      transform: scale(1);
+    }
+    #lightbox-caption {
+      position: absolute;
+      bottom: -30px; left: 0; right: 0;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: rgba(200,180,130,0.5);
+      font-family: 'Orbitron', sans-serif;
+    }
+    #lightbox-close {
+      position: absolute;
+      top: -36px; right: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.2s;
+    }
+    #lightbox-close:hover { color: #fff; }
+
+    /* ── Corner brackets ───────────────────────────────────────────── */
+    .corner { position: fixed; z-index: 25; pointer-events: none; }
+    .corner.tl { top: 8px;  left: 64px; }
+    .corner.tr { top: 8px;  right: 8px; }
+    .corner.bl { bottom: 8px; left: 64px; }
+    .corner.br { bottom: 8px; right: 8px; }
+
+    /* ── Clock ─────────────────────────────────────────────────────── */
+    #dateDisplay {
+      position: fixed;
+      top: 12px; right: 20px;
+      z-index: 30;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(0,0,0,0.3);
+      text-align: right;
+      pointer-events: none;
+      line-height: 1.6;
+    }
+
+    /* ── Scan lines overlay ────────────────────────────────────────── */
+    #scanlines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px
+      );
+    }
+  </style>
+</head>
+<body>
+<div id="portfolio-root">
+
+  <!-- Parallax background -->
+  <div id="bg-layer">
+    <!--
+      Optional: add a background image here.
+      e.g. <img src="./assets/images/portfolio-bg.jpg" id="bg-img" alt="">
+      It will scroll at 30% speed automatically.
+    -->
+  </div>
+
+  <!-- Left sidebar -->
+  <aside id="sidebar">
+    <!--
+      ── YEAR TABS ──────────────────────────────────────────────────────
+      To add a new year: copy one .year-tab button and add a matching
+      .year-section with the same data-year value in #scroll-track below.
+      The JS wires everything up automatically.
+    -->
+    <button class="year-tab active" data-year="2026">2026</button>
+    <button class="year-tab"        data-year="2025">2025</button>
+
+    <div id="sidebar-nav">
+      <a class="sidebar-nav-item" href="./index.html">HOME</a>
+      <a class="sidebar-nav-item" href="./about.html">ABOUT</a>
+      <a class="sidebar-nav-item active" href="#">PORTFOLIO</a>
+      <a class="sidebar-nav-item" href="./contact.html">CONTACT</a>
+    </div>
+  </aside>
+
+  <!-- Horizontal scroll track -->
+  <div id="scroll-area">
+    <div id="scroll-track">
+
+      <!-- ── 2026 section ──────────────────────────────────────────── -->
+      <!--
+        To add images: replace .placeholder items with real .grid-item elements:
+        <div class="grid-item" data-caption="Project Title">
+          <img src="./assets/images/portfolio/2026/project.jpg" alt="Project Title">
+          <div class="grid-caption">Project Title</div>
+        </div>
+      -->
+      <section class="year-section" data-year="2026">
+        <div class="year-label">2026</div>
+        <div class="year-heading">2026</div>
+        <div class="year-count" data-count-year="2026">— 0 works</div>
+        <div class="img-grid" data-grid-year="2026">
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- ── 2025 section ──────────────────────────────────────────── -->
+      <section class="year-section" data-year="2025">
+        <div class="year-label">2025</div>
+        <div class="year-heading">2025</div>
+        <div class="year-count" data-count-year="2025">— 0 works</div>
+        <div class="img-grid" data-grid-year="2025">
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+          <div class="grid-item placeholder" data-label="ADD IMAGE"></div>
+        </div>
+      </section>
+
+    </div><!-- /scroll-track -->
+  </div><!-- /scroll-area -->
+
+  <!-- Lightbox -->
+  <div id="lightbox">
+    <div id="lightbox-backdrop"></div>
+    <div id="lightbox-img-wrap">
+      <button id="lightbox-close">✕ CLOSE</button>
+      <img id="lightbox-img" src="" alt="">
+      <div id="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <!-- Corner brackets -->
+  <div class="corner tl"><svg width="24" height="24" fill="none"><polyline points="0,24 0,0 24,0" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+  <div class="corner tr"><svg width="24" height="24" fill="none"><polyline points="0,0 24,0 24,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+  <div class="corner bl"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/><polyline points="0,0 0,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+  <div class="corner br"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24 24,0" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+
+  <div id="scanlines"></div>
+  <div id="dateDisplay"></div>
+</div>
+
+<script>
+(function() {
+
+  // ── Clock ─────────────────────────────────────────────────────────────────
+  const HOUR_NAMES = [
+    'Dark Hour','Hollow Hour','Grave Hour','Witching Hour',
+    'Bone Hour','False Hour','Pale Hour','Uneasy Hour',
+    'Waking Hour','Glass Hour','Ascendant Hour','Bright Hour',
+    'Zenith Hour','Verdict Hour','Haze Hour','Gold Hour',
+    'Shadow Hour','Fraying Hour','Threshold Hour','Ember Hour',
+    'Blue Hour','Velvet Hour','Dissolving Hour','Sleep Hour',
+  ];
+  function updateClock() {
+    const el = document.getElementById('dateDisplay');
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    el.innerHTML = HOUR_NAMES[now.getHours()] + '<br>' + hh + ':' + mm;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  // ── Work counts ───────────────────────────────────────────────────────────
+  // Count real (non-placeholder) grid items per year and update the label
+  document.querySelectorAll('[data-count-year]').forEach(function(el) {
+    const year = el.getAttribute('data-count-year');
+    const grid = document.querySelector('[data-grid-year="' + year + '"]');
+    const realItems = grid ? grid.querySelectorAll('.grid-item:not(.placeholder)').length : 0;
+    el.textContent = '— ' + realItems + ' work' + (realItems !== 1 ? 's' : '');
+  });
+
+  // ── Year tab navigation ───────────────────────────────────────────────────
+  const scrollArea = document.getElementById('scroll-area');
+  const tabs = document.querySelectorAll('.year-tab');
+
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const year = this.getAttribute('data-year');
+      const section = document.querySelector('.year-section[data-year="' + year + '"]');
+      if (!section) return;
+      // scroll the section into view
+      scrollArea.scrollTo({ left: section.offsetLeft, behavior: 'smooth' });
+      // update active tab
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  // Update active tab as user scrolls
+  scrollArea.addEventListener('scroll', function() {
+    const sections = document.querySelectorAll('.year-section');
+    const midX = scrollArea.scrollLeft + scrollArea.offsetWidth / 2;
+    sections.forEach(function(sec) {
+      const left  = sec.offsetLeft;
+      const right = left + sec.offsetWidth;
+      if (midX >= left && midX < right) {
+        const year = sec.getAttribute('data-year');
+        tabs.forEach(function(t) {
+          t.classList.toggle('active', t.getAttribute('data-year') === year);
+        });
+      }
+    });
+    // parallax background
+    const bgImg = document.getElementById('bg-img');
+    if (bgImg) {
+      bgImg.style.transform = 'translateX(' + (-scrollArea.scrollLeft * 0.3) + 'px)';
+    }
+  });
+
+  // ── Lightbox ──────────────────────────────────────────────────────────────
+  const lightbox         = document.getElementById('lightbox');
+  const lightboxImg      = document.getElementById('lightbox-img');
+  const lightboxCaption  = document.getElementById('lightbox-caption');
+  const lightboxBackdrop = document.getElementById('lightbox-backdrop');
+  const lightboxClose    = document.getElementById('lightbox-close');
+
+  function openLightbox(src, caption) {
+    lightboxImg.src        = src;
+    lightboxCaption.textContent = caption || '';
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+    // clear src after transition
+    setTimeout(function() { lightboxImg.src = ''; }, 320);
+  }
+
+  lightboxBackdrop.addEventListener('click', closeLightbox);
+  lightboxClose.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // Wire up all real grid items for lightbox
+  function wireGridItems() {
+    document.querySelectorAll('.grid-item:not(.placeholder)').forEach(function(item) {
+      item.addEventListener('click', function() {
+        const img     = this.querySelector('img');
+        const caption = this.getAttribute('data-caption') || '';
+        if (img) openLightbox(img.src, caption);
+      });
+    });
+  }
+  wireGridItems();
+
+  // ── Diamond nav transition ────────────────────────────────────────────────
+  const DIAMOND_COLORS = ['#111','#333','#555','#222','#444'];
+
+  function spawnDiamonds(ox, oy, cb) {
+    const COUNT = 28;
+    const wrap  = document.createElement('div');
+    wrap.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;';
+    document.body.appendChild(wrap);
+    let done = 0;
+    for (var i = 0; i < COUNT; i++) {
+      (function() {
+        const d     = document.createElement('div');
+        const size  = 12 + Math.random() * 44;
+        const angle = Math.random() * 360;
+        const dist  = 80 + Math.random() * Math.max(window.innerWidth, window.innerHeight) * 0.9;
+        const tx    = Math.cos(angle * Math.PI/180) * dist;
+        const ty    = Math.sin(angle * Math.PI/180) * dist;
+        const rot   = Math.random() * 360;
+        const delay = Math.random() * 120;
+        const dur   = 300 + Math.random() * 200;
+        const col   = DIAMOND_COLORS[Math.floor(Math.random() * DIAMOND_COLORS.length)];
+        d.style.cssText = [
+          'position:absolute',
+          'left:' + (ox - size/2) + 'px',
+          'top:'  + (oy - size/2) + 'px',
+          'width:' + size + 'px',
+          'height:' + size + 'px',
+          'background:' + col,
+          'clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
+          'opacity:1',
+          'transform:translate(0,0) rotate(' + rot + 'deg) scale(1)',
+          'transition:transform ' + dur + 'ms cubic-bezier(.2,.8,.4,1) ' + delay + 'ms,' +
+            'opacity ' + (dur*0.6) + 'ms ease ' + (delay + dur*0.4) + 'ms'
+        ].join(';');
+        wrap.appendChild(d);
+        requestAnimationFrame(function() { requestAnimationFrame(function() {
+          d.style.transform = 'translate(' + tx + 'px,' + ty + 'px) rotate(' + (rot+180) + 'deg) scale(0.1)';
+          d.style.opacity   = '0';
+        }); });
+        setTimeout(function() {
+          done++;
+          if (done === COUNT) { wrap.remove(); if (cb) cb(); }
+        }, dur + delay + 50);
+      })();
+    }
+  }
+
+  document.querySelectorAll('.sidebar-nav-item').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (!href || href === '#') return;
+      e.preventDefault();
+      const rect = this.getBoundingClientRect();
+      spawnDiamonds(rect.left + rect.width/2, rect.top + rect.height/2, function() {
+        window.location.href = href;
+      });
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
