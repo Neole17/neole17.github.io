@@ -40,7 +40,7 @@ function openMenu() {
 
 function closeMenu() {
   if (!state.menuOpen) return;
-  state.menuOpen       = false;
+  state.menuOpen = false;
   state.targetProgress = 0;
   renderer.startAnim();
 }
