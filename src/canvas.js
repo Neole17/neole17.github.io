@@ -2,7 +2,7 @@
 const ITEMS        = ['PORTFOLIO', 'ABOUT', 'CONTACT'];
 const HUB_R        = 52;
 const SEG_INNER    = 14;
-const SEG_OUTER    = 320;
+const SEG_OUTER    = 260;
 const ANGLE_SPREAD = 80;
 const GAP_DEG      = 5;
 const SEG_DEG      = (ANGLE_SPREAD / ITEMS.length) - GAP_DEG;
