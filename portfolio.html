@@ -12,370 +12,272 @@
 
     html, body {
       width: 100%; height: 100%;
-      background: #f5f3ef;
       overflow: hidden;
       font-family: 'Rajdhani', sans-serif;
       color: #1a1a1a;
     }
 
-    /* ── Root layout ───────────────────────────────────────────────── */
     #portfolio-root {
       width: 100vw; height: 100vh;
       display: flex;
       overflow: hidden;
       position: relative;
+      background: linear-gradient(160deg, #faf9f7 0%, #f3f1ed 50%, #edf0f5 100%);
     }
 
-    /* ── Parallax background ───────────────────────────────────────── */
-    #bg-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-    }
-    #bg-layer img {
-      position: absolute;
-      top: 0; left: 0;
-      height: 100%;
-      width: auto;
-      min-width: 100%;
-      object-fit: cover;
-      opacity: 0.08;
-      filter: none;
-      /* background moves at 30% the speed of content — set via JS */
-      will-change: transform;
-      transition: transform 0.05s linear;
+    /* faint dot grid */
+    #portfolio-root::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
+      background-size: 32px 32px;
     }
 
-    /* ── Left tab sidebar ──────────────────────────────────────────── */
+    /* ── Sidebar ──────────────────────────────────────────────────── */
     #sidebar {
-      position: relative;
-      z-index: 30;
-      flex-shrink: 0;
-      width: 56px;
-      height: 100vh;
-      background: rgba(245,243,239,0.95);
-      border-right: 1px solid rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 60px 0 20px;
-      gap: 4px;
+      position: relative; z-index: 30; flex-shrink: 0;
+      width: 52px; height: 100vh;
+      background: rgba(250,249,247,0.97);
+      border-right: 1px solid rgba(0,0,0,0.08);
+      display: flex; flex-direction: column;
+      align-items: center; padding: 52px 0 16px; gap: 2px;
     }
-
-    /* Year tab buttons — vertical text */
     .year-tab {
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
+      writing-mode: vertical-rl; text-orientation: mixed;
       transform: rotate(180deg);
       font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: rgba(0,0,0,0.25);
-      cursor: pointer;
-      padding: 16px 8px;
-      border: none;
-      background: transparent;
+      font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      color: rgba(0,0,0,0.22); cursor: pointer;
+      padding: 18px 8px; border: none; background: transparent;
       transition: color 0.2s, background 0.2s;
       border-left: 2px solid transparent;
-      width: 100%;
-      text-align: center;
+      width: 100%; text-align: center;
     }
-    .year-tab:hover {
-      color: rgba(0,0,0,0.8);
-      background: rgba(0,0,0,0.04);
-    }
-    .year-tab.active {
-      color: #111;
-      border-left-color: #111;
-      background: rgba(0,0,0,0.06);
-    }
+    .year-tab:hover { color: rgba(0,0,0,0.75); background: rgba(0,0,0,0.03); }
+    .year-tab.active { color: #111; border-left-color: #111; background: rgba(0,0,0,0.05); }
 
-    /* Sidebar nav links at bottom */
     #sidebar-nav {
-      margin-top: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      width: 100%;
+      margin-top: auto; display: flex; flex-direction: column;
+      align-items: center; gap: 0; width: 100%;
     }
     .sidebar-nav-item {
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
+      writing-mode: vertical-rl; transform: rotate(180deg);
       font-family: 'Orbitron', sans-serif;
-      font-size: 8px;
-      letter-spacing: 2px;
-      color: rgba(0,0,0,0.25);
-      text-decoration: none;
-      padding: 10px 8px;
-      transition: color 0.2s;
+      font-size: 8px; letter-spacing: 2px;
+      color: rgba(0,0,0,0.22); text-decoration: none;
+      padding: 10px 8px; transition: color 0.2s;
     }
     .sidebar-nav-item:hover { color: rgba(0,0,0,0.7); }
-    .sidebar-nav-item.active { color: rgba(0,0,0,0.4); cursor: default; }
+    .sidebar-nav-item.active { color: rgba(0,0,0,0.38); cursor: default; }
 
-    /* ── Main scroll area ──────────────────────────────────────────── */
+    /* ── Scroll area ──────────────────────────────────────────────── */
     #scroll-area {
-      position: relative;
-      z-index: 20;
-      flex: 1;
-      height: 100vh;
-      overflow-x: scroll;
-      overflow-y: hidden;
-      scroll-behavior: smooth;
-      /* hide scrollbar but keep scroll */
+      position: relative; z-index: 20;
+      flex: 1; height: 100vh;
+      overflow-x: scroll; overflow-y: hidden;
       scrollbar-width: none;
     }
     #scroll-area::-webkit-scrollbar { display: none; }
 
-    /* ── Inner track: all year sections side by side ───────────────── */
     #scroll-track {
-      display: flex;
-      flex-direction: row;
-      height: 100vh;
-      width: max-content;
+      display: flex; flex-direction: row; align-items: stretch;
+      height: 100vh; width: max-content;
+      padding: 0 80px; /* breathing room at edges */
     }
 
-    /* ── Year section ──────────────────────────────────────────────── */
+    /* ── Year section ─────────────────────────────────────────────── */
     .year-section {
-      width: 100vw;       /* each year = one screen width */
-      min-width: 800px;
-      height: 100vh;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      padding: 48px 48px 32px;
+      display: flex; flex-direction: column;
+      height: 100vh; flex-shrink: 0;
       position: relative;
     }
 
-    /* ── Year label ────────────────────────────────────────────────── */
-    .year-label {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(48px, 8vw, 96px);
-      font-weight: 900;
-      letter-spacing: 8px;
-      color: rgba(0,0,0,0.05);
-      position: absolute;
-      top: 20px; right: 40px;
-      pointer-events: none;
-      user-select: none;
-      line-height: 1;
-    }
-
-    /* ── Year heading ──────────────────────────────────────────────── */
+    /* year label top-left */
     .year-heading {
       font-family: 'Orbitron', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 5px;
-      color: #111;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      font-size: 10px; font-weight: 700; letter-spacing: 5px;
+      color: rgba(0,0,0,0.28);
+      padding: 20px 0 0 4px;
+      flex-shrink: 0;
     }
-    .year-heading::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(0,0,0,0.2), transparent);
-    }
-
     .year-count {
-      font-size: 10px;
-      letter-spacing: 2px;
-      color: rgba(0,0,0,0.3);
-      margin-bottom: 28px;
+      font-size: 9px; letter-spacing: 2px; color: rgba(0,0,0,0.2);
+      padding: 4px 0 0 4px; margin-bottom: 0; flex-shrink: 0;
     }
 
-    /* ── Image grid ────────────────────────────────────────────────── */
-    .img-grid {
+    /* ── Strip row: images laid out horizontally ─────────────────── */
+    .strip-row {
       flex: 1;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      grid-auto-rows: 1fr;
-      gap: 12px;
-      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 28px; /* space between images */
+      padding: 40px 0 60px;
     }
 
-    /* ── Grid item ─────────────────────────────────────────────────── */
-    .grid-item {
+    /* ── Each image strip ────────────────────────────────────────── */
+    .strip {
       position: relative;
+      height: 100%;
+      /* default width — tall portrait strip */
+      width: 160px;
+      flex-shrink: 0;
       cursor: pointer;
       overflow: hidden;
-      background: rgba(0,0,0,0.03);
-      border: 1px solid rgba(0,0,0,0.08);
-      transition: border-color 0.2s, transform 0.2s;
+      transition: width 0.4s cubic-bezier(.4,0,.2,1),
+                  box-shadow 0.3s;
     }
-    .grid-item:hover {
-      border-color: rgba(0,0,0,0.25);
-      transform: scale(1.015);
-      z-index: 2;
+    /* featured: wider */
+    .strip.featured {
+      width: 380px;
     }
-    .grid-item img {
+    /* wide landscape pieces */
+    .strip.wide {
+      width: 260px;
+    }
+    .strip img {
       width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: opacity 0.3s;
+      object-fit: cover; display: block;
+      transition: transform 0.4s ease;
+    }
+    .strip:hover img { transform: scale(1.03); }
+    .strip:hover {
+      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+      z-index: 5;
     }
 
-    /* Caption overlay on hover */
-    .grid-caption {
+    /* label above strip on hover */
+    .strip-label {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 10px 12px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.7));
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: rgba(255,255,255,0.9);
+      top: -36px; left: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px; letter-spacing: 3px;
+      color: rgba(0,0,0,0.5);
+      white-space: nowrap;
       opacity: 0;
       transform: translateY(4px);
       transition: opacity 0.2s, transform 0.2s;
       pointer-events: none;
     }
-    .grid-item:hover .grid-caption {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Placeholder for empty slots */
-    .grid-item.placeholder {
-      cursor: default;
-      opacity: 0.35;
-    }
-    .grid-item.placeholder::after {
-      content: attr(data-label);
+    .strip-sublabel {
       position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9px;
-      letter-spacing: 2px;
-      color: rgba(0,0,0,0.2);
-    }
-    .grid-item.placeholder img { display: none; }
-
-    /* Vertical section divider */
-    .section-divider {
-      width: 1px;
-      height: 100vh;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.12) 20%, rgba(0,0,0,0.12) 80%, transparent);
-      flex-shrink: 0;
-      align-self: center;
-    }
-
-    /* ── Lightbox ──────────────────────────────────────────────────── */
-    #lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      top: -20px; left: 0;
+      font-size: 9px; letter-spacing: 2px;
+      color: rgba(0,0,0,0.3);
+      white-space: nowrap;
       opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s 0.04s, transform 0.2s 0.04s;
       pointer-events: none;
+      font-family: 'Rajdhani', sans-serif;
+    }
+    .strip:hover .strip-label,
+    .strip:hover .strip-sublabel { opacity: 1; transform: translateY(0); }
+
+    /* vertical divider between years */
+    .year-divider {
+      width: 1px; height: 60vh;
+      align-self: center; flex-shrink: 0;
+      margin: 0 60px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.12) 30%, rgba(0,0,0,0.12) 70%, transparent);
+    }
+
+
+    /* ── Slideshow strip ──────────────────────────────────────────── */
+    /* Usage: add data-slideshow to .strip, wrap each img in .slide div */
+    .strip .slide { display: none; width: 100%; height: 100%; }
+    .strip .slide.active { display: block; }
+    .strip .slide img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .strip[data-slideshow]:hover .slide.active img { transform: scale(1.03); }
+
+    /* counter badge */
+    .slide-badge {
+      position: absolute; bottom: 10px; right: 10px;
+      font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 1px;
+      color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.4);
+      padding: 3px 7px; pointer-events: none; z-index: 4;
+    }
+    /* prev/next arrows */
+    .slide-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.35); color: #fff;
+      border: none; cursor: pointer; font-size: 18px; line-height: 1;
+      padding: 10px 8px; opacity: 0; transition: opacity 0.2s; z-index: 5;
+    }
+    .slide-arrow.prev { left: 0; }
+    .slide-arrow.next { right: 0; }
+    .strip[data-slideshow]:hover .slide-arrow { opacity: 1; }
+
+    /* ── Lightbox ─────────────────────────────────────────────────── */
+    #lightbox {
+      position: fixed; inset: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
       transition: opacity 0.3s;
     }
-    #lightbox.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    #lightbox.open { opacity: 1; pointer-events: auto; }
     #lightbox-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.88);
-      cursor: pointer;
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.92); cursor: pointer;
     }
     #lightbox-img-wrap {
-      position: relative;
-      z-index: 2;
-      max-width: 82vw;
-      max-height: 82vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative; z-index: 2;
+      max-width: 88vw; max-height: 88vh;
+      display: flex; align-items: center; justify-content: center;
     }
     #lightbox-img {
-      max-width: 82vw;
-      max-height: 82vh;
-      object-fit: contain;
-      display: block;
-      border: 1px solid rgba(0,0,0,0.15);
-      box-shadow: 0 0 80px rgba(0,0,0,0.8);
-      transform: scale(0.92);
-      transition: transform 0.3s cubic-bezier(.2,1,.4,1);
+      max-width: 88vw; max-height: 88vh;
+      object-fit: contain; display: block;
+      box-shadow: 0 0 100px rgba(0,0,0,0.6);
+      transform: scale(0.94);
+      transition: transform 0.35s cubic-bezier(.2,1,.4,1), opacity 0.15s;
     }
-    #lightbox.open #lightbox-img {
-      transform: scale(1);
-    }
-    #lightbox-caption {
-      position: absolute;
-      bottom: -30px; left: 0; right: 0;
-      text-align: center;
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: rgba(200,180,130,0.5);
+    #lightbox.open #lightbox-img { transform: scale(1); }
+    #lightbox-title {
+      position: absolute; top: -32px; left: 0;
       font-family: 'Orbitron', sans-serif;
+      font-size: 10px; letter-spacing: 4px;
+      color: rgba(255,255,255,0.6);
+    }
+    #lightbox-sub {
+      position: absolute; top: -16px; left: 0;
+      font-size: 11px; letter-spacing: 2px;
+      color: rgba(255,255,255,0.35);
+      font-family: 'Rajdhani', sans-serif;
     }
     #lightbox-close {
-      position: absolute;
-      top: -36px; right: 0;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.5);
-      cursor: pointer;
-      background: none;
-      border: none;
+      position: absolute; top: -36px; right: 0;
+      font-family: 'Orbitron', sans-serif; font-size: 9px;
+      letter-spacing: 3px; color: rgba(255,255,255,0.4);
+      cursor: pointer; background: none; border: none;
       transition: color 0.2s;
     }
     #lightbox-close:hover { color: #fff; }
 
-    /* ── Corner brackets ───────────────────────────────────────────── */
+    /* ── Corner brackets ──────────────────────────────────────────── */
     .corner { position: fixed; z-index: 25; pointer-events: none; }
-    .corner.tl { top: 8px;  left: 64px; }
-    .corner.tr { top: 8px;  right: 8px; }
-    .corner.bl { bottom: 8px; left: 64px; }
+    .corner.tl { top: 8px; left: 60px; }
+    .corner.tr { top: 8px; right: 8px; }
+    .corner.bl { bottom: 8px; left: 60px; }
     .corner.br { bottom: 8px; right: 8px; }
 
-    /* ── Clock ─────────────────────────────────────────────────────── */
+    /* ── Clock ────────────────────────────────────────────────────── */
     #dateDisplay {
-      position: fixed;
-      top: 12px; right: 20px;
-      z-index: 30;
+      position: fixed; top: 12px; right: 18px; z-index: 30;
       font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
-      letter-spacing: 3px;
-      color: rgba(0,0,0,0.3);
-      text-align: right;
-      pointer-events: none;
-      line-height: 1.6;
+      font-size: 10px; letter-spacing: 3px;
+      color: rgba(0,0,0,0.25); text-align: right;
+      pointer-events: none; line-height: 1.6;
     }
-
   </style>
 </head>
 <body>
 <div id="portfolio-root">
 
-  <!-- Parallax background -->
-  <div id="bg-layer">
-    <!--
-      Optional: add a background image here.
-      e.g. <img src="./assets/images/portfolio-bg.jpg" id="bg-img" alt="">
-      It will scroll at 30% speed automatically.
-    -->
-  </div>
-
-  <!-- Left sidebar -->
   <aside id="sidebar">
     <!--
-      ── YEAR TABS ──────────────────────────────────────────────────────
-      To add a new year: copy one .year-tab button and add a matching
-      .year-section with the same data-year value in #scroll-track below.
-      The JS wires everything up automatically.
+      TO ADD A YEAR: add a .year-tab here, and a matching .year-section
+      + .year-divider in #scroll-track below.
     -->
     <button class="year-tab active" data-year="2026">2026</button>
     <button class="year-tab"        data-year="2025">2025</button>
@@ -388,289 +290,336 @@
     </div>
   </aside>
 
-  <!-- Horizontal scroll track -->
   <div id="scroll-area">
     <div id="scroll-track">
 
-      <!-- ── 2026 section ──────────────────────────────────────────── -->
+      <!-- ══ 2026 ═══════════════════════════════════════════════════ -->
       <!--
-        To add images: replace .placeholder items with real .grid-item elements:
-        <div class="grid-item" data-caption="Project Title">
-          <img src="./assets/images/portfolio/2026/project.jpg" alt="Project Title">
-          <div class="grid-caption">Project Title</div>
-        </div>
+        Strip types: default (narrow portrait), .featured (wide), .wide (medium landscape)
+        data-caption = title shown above on hover
+        data-sub     = subtitle / medium line
       -->
       <section class="year-section" data-year="2026">
-        <div class="year-label">2026</div>
         <div class="year-heading">2026</div>
-        <div class="year-count" data-count-year="2026">— 0 works</div>
-        <div class="img-grid" data-grid-year="2026">
+        <div class="year-count" data-count-year="2026"></div>
+        <div class="strip-row">
 
-          <div class="grid-item" data-caption="Witch Bones">
-          <img src="./assets/images/portfolio/2026/T2 final render 1.png" alt="Witch Bones">
-          <div class="grid-caption">Witch Bones</div>
+          <div class="strip featured"
+               data-caption="WITCH BONES"
+               data-sub="Character Design">
+            <div class="strip-label">WITCH BONES</div>
+            <div class="strip-sublabel">Character Design</div>
+            <img src="./assets/images/portfolio/2026/T2 final render 1.png" alt="Witch Bones">
           </div>
 
-          <div class="grid-item" data-caption="Environmental Art Concept">
-          <img src="./assets/images/portfolio/2026/Environmental sketch.png" alt="Environmental Art Concept">
-          <div class="grid-caption">Environmental Art Concept</div>
+          <div class="strip"
+               data-caption="ENVIRONMENTAL SKETCH"
+               data-sub="Concept Art">
+            <div class="strip-label">ENVIRONMENTAL SKETCH</div>
+            <div class="strip-sublabel">Concept Art</div>
+            <img src="./assets/images/portfolio/2026/Environmental sketch.png" alt="Environmental Art Concept">
           </div>
 
-          <div class="grid-item" data-caption="Environmental Art Practice">
-          <img src="./assets/images/portfolio/2026/VISCOM Term3 Week 1.png" alt="Environmental Art Practice">
-          <div class="grid-caption">Environmental Art Practice</div>
+          <div class="strip wide"
+               data-caption="VISCOM TERM 3"
+               data-sub="Environmental Art Practice">
+            <div class="strip-label">VISCOM TERM 3</div>
+            <div class="strip-sublabel">Environmental Art Practice</div>
+            <img src="./assets/images/portfolio/2026/VISCOM Term3 Week 1.png" alt="Environmental Art Practice">
           </div>
 
-           <div class="grid-item" data-caption="Hard Machinery Sketches">
-          <img src="./assets/images/portfolio/2026/hard machinery sketch.png" alt="Hard Machinery Sketches">
-          <div class="grid-caption">Hard Machinery Sketches</div>
+          <div class="strip"
+               data-caption="HARD MACHINERY"
+               data-sub="Industrial Sketches">
+            <div class="strip-label">HARD MACHINERY</div>
+            <div class="strip-sublabel">Industrial Sketches</div>
+            <img src="./assets/images/portfolio/2026/hard machinery sketch.png" alt="Hard Machinery Sketches">
           </div>
 
-          <div class="grid-item" data-caption="frankenstein storyboard">
-          <img src="./assets/images/portfolio/2026/frankenstein.jpg" alt="Frankenstein Storyboard">
-          <div class="grid-caption">Concept Storyboard of "Frankenstein," by Mary Shelly</div>
+          <div class="strip wide"
+               data-caption="FRANKENSTEIN"
+               data-sub="Concept Storyboard">
+            <div class="strip-label">FRANKENSTEIN</div>
+            <div class="strip-sublabel">Concept Storyboard — Mary Shelley</div>
+            <img src="./assets/images/portfolio/2026/frankenstein.jpg" alt="Frankenstein Storyboard">
           </div>
 
-          <div class="grid-item" data-caption="Assemblage">
-          <img src="./assets/images/portfolio/2026/assemblage00.jpeg" alt="Assemblage">
-          <div class="grid-caption">Assemblage</div>
+          <div class="strip"
+               data-caption="ASSEMBLAGE"
+               data-sub="Mixed Media">
+            <div class="strip-label">ASSEMBLAGE</div>
+            <div class="strip-sublabel">Mixed Media</div>
+            <img src="./assets/images/portfolio/2026/assemblage00.jpeg" alt="Assemblage">
           </div>
 
-          <div class="grid-item" data-caption="Character Concept - Watchmaker">
-          <img src="./assets/images/portfolio/2026/Watchmaker part 2.png" alt="Character Concept - Watchmaker">
-          <div class="grid-caption">Character Concept - Watchmaker</div>
-          </div> 
+          <div class="strip"
+               data-caption="WATCHMAKER"
+               data-sub="Character Concept">
+            <div class="strip-label">WATCHMAKER</div>
+            <div class="strip-sublabel">Character Concept</div>
+            <img src="./assets/images/portfolio/2026/Watchmaker part 2.png" alt="Character Concept - Watchmaker">
+          </div>
 
         </div>
       </section>
 
-      <div class="section-divider"></div>
+      <div class="year-divider"></div>
 
-      <!-- ── 2025 section ──────────────────────────────────────────── -->
+      <!-- ══ 2025 ═══════════════════════════════════════════════════ -->
       <section class="year-section" data-year="2025">
-        <div class="year-label">2025</div>
         <div class="year-heading">2025</div>
-        <div class="year-count" data-count-year="2025">— 0 works</div>
-        <div class="img-grid" data-grid-year="2025">
-          
-          <div class="grid-item" data-caption="Crow">
-          <img src="./assets/images/portfolio/2025/crow.jpeg" alt="Crow">
-          <div class="grid-caption">Crow</div>
-          </div> 
-          
-          <div class="grid-item" data-caption="Dove-charity">
-          <img src="./assets/images/portfolio/2025/dove_02.jpg" alt="Dove-charity">
-          <div class="grid-caption">Dove - Charity</div>
-          </div> 
-          
-          <div class="grid-item" data-caption="VISCOM Camera Shots Exercise">
-          <img src="./assets/images/portfolio/2025/VISCOM Week3 In-Class (2).png" alt="VISCOM Camera Shots Exercise">
-          <div class="grid-caption">VISCOM Camera Shots Exercise</div>
-          </div> 
+        <div class="year-count" data-count-year="2025"></div>
+        <div class="strip-row">
 
-          <div class="grid-item" data-caption="VISCOM movie compositions">
-          <img src="./assets/images/portfolio/2025/viscom W1 movie comp 3.png" alt="VISCOM movie compositions">
-          <div class="grid-caption">VISCOM Movie Composition Breakdowns</div>
-          </div> 
+          <div class="strip"
+               data-caption="CROW"
+               data-sub="Illustration">
+            <div class="strip-label">CROW</div>
+            <div class="strip-sublabel">Illustration</div>
+            <img src="./assets/images/portfolio/2025/crow.jpeg" alt="Crow">
+          </div>
 
-          <div class="grid-item" data-caption="VISCOM plane">
-          <img src="./assets/images/portfolio/2025/Week8 airplane.png" alt="VISCOM plane">
-          <div class="grid-caption">VISCOM plane</div>
-          </div> 
+          <div class="strip"
+               data-caption="DOVE — CHARITY"
+               data-sub="Illustration">
+            <div class="strip-label">DOVE — CHARITY</div>
+            <div class="strip-sublabel">Illustration</div>
+            <img src="./assets/images/portfolio/2025/dove_02.jpg" alt="Dove-charity">
+          </div>
 
-          <div class="grid-item" data-caption="Winter Formal Enchanted Forest Poster">
-          <img src="./assets/images/portfolio/2025/WF_enchanted_forest.png" alt="Enchanted Forest">
-          <div class="grid-caption">Southridge School 2025 Winter Formal: Enchanted Forest - Poster</div>
-          </div> 
-          
+          <div class="strip wide"
+               data-caption="CAMERA SHOTS"
+               data-sub="VISCOM Exercise">
+            <div class="strip-label">CAMERA SHOTS</div>
+            <div class="strip-sublabel">VISCOM Exercise</div>
+            <img src="./assets/images/portfolio/2025/VISCOM Week3 In-Class (2).png" alt="VISCOM Camera Shots Exercise">
+          </div>
+
+          <div class="strip wide"
+               data-caption="MOVIE COMPOSITIONS"
+               data-sub="VISCOM Breakdown">
+            <div class="strip-label">MOVIE COMPOSITIONS</div>
+            <div class="strip-sublabel">VISCOM Breakdown</div>
+            <img src="./assets/images/portfolio/2025/viscom W1 movie comp 3.png" alt="VISCOM movie compositions">
+          </div>
+
+          <div class="strip wide"
+               data-caption="AIRPLANE"
+               data-sub="VISCOM Week 8">
+            <div class="strip-label">AIRPLANE</div>
+            <div class="strip-sublabel">VISCOM Week 8</div>
+            <img src="./assets/images/portfolio/2025/Week8 airplane.png" alt="VISCOM plane">
+          </div>
+
+          <div class="strip featured"
+               data-caption="ENCHANTED FOREST"
+               data-sub="Winter Formal Poster · 2025">
+            <div class="strip-label">ENCHANTED FOREST</div>
+            <div class="strip-sublabel">Winter Formal Poster · 2025</div>
+            <img src="./assets/images/portfolio/2025/WF_enchanted_forest.png" alt="Enchanted Forest">
+          </div>
+
         </div>
       </section>
 
-    </div><!-- /scroll-track -->
-  </div><!-- /scroll-area -->
+    </div>
+  </div>
 
   <!-- Lightbox -->
   <div id="lightbox">
     <div id="lightbox-backdrop"></div>
     <div id="lightbox-img-wrap">
-      <button id="lightbox-close">✕ CLOSE</button>
+      <div id="lightbox-title"></div>
+      <div id="lightbox-sub"></div>
+      <button id="lightbox-close">&#10005; CLOSE</button>
       <img id="lightbox-img" src="" alt="">
-      <div id="lightbox-caption"></div>
     </div>
   </div>
 
-  <!-- Corner brackets -->
-  <div class="corner tl"><svg width="24" height="24" fill="none"><polyline points="0,24 0,0 24,0" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
-  <div class="corner tr"><svg width="24" height="24" fill="none"><polyline points="0,0 24,0 24,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
-  <div class="corner bl"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/><polyline points="0,0 0,24" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
-  <div class="corner br"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24 24,0" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/></svg></div>
+  <div class="corner tl"><svg width="24" height="24" fill="none"><polyline points="0,24 0,0 24,0" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
+  <div class="corner tr"><svg width="24" height="24" fill="none"><polyline points="0,0 24,0 24,24" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
+  <div class="corner bl"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/><polyline points="0,0 0,24" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
+  <div class="corner br"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24 24,0" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
 
-  <div id="scanlines"></div>
   <div id="dateDisplay"></div>
 </div>
 
 <script>
 (function() {
 
-  // ── Clock ─────────────────────────────────────────────────────────────────
-  const HOUR_NAMES = [
+  // ── Clock ──────────────────────────────────────────────────────────────────
+  var HOUR_NAMES = [
     'Dark Hour','Hollow Hour','Grave Hour','Witching Hour',
     'Bone Hour','False Hour','Pale Hour','Uneasy Hour',
     'Waking Hour','Glass Hour','Ascendant Hour','Bright Hour',
     'Zenith Hour','Verdict Hour','Haze Hour','Gold Hour',
     'Shadow Hour','Fraying Hour','Threshold Hour','Ember Hour',
-    'Blue Hour','Velvet Hour','Dissolving Hour','Sleep Hour',
+    'Blue Hour','Velvet Hour','Dissolving Hour','Sleep Hour'
   ];
   function updateClock() {
-    const el = document.getElementById('dateDisplay');
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mm = String(now.getMinutes()).padStart(2,'0');
-    el.innerHTML = HOUR_NAMES[now.getHours()] + '<br>' + hh + ':' + mm;
+    var el = document.getElementById('dateDisplay'), now = new Date();
+    el.innerHTML = HOUR_NAMES[now.getHours()] + '<br>' +
+      String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0');
   }
-  updateClock();
-  setInterval(updateClock, 30000);
+  updateClock(); setInterval(updateClock, 30000);
 
-  // ── Work counts ───────────────────────────────────────────────────────────
-  // Count real (non-placeholder) grid items per year and update the label
+  // ── Work counts ────────────────────────────────────────────────────────────
   document.querySelectorAll('[data-count-year]').forEach(function(el) {
-    const year = el.getAttribute('data-count-year');
-    const grid = document.querySelector('[data-grid-year="' + year + '"]');
-    const realItems = grid ? grid.querySelectorAll('.grid-item:not(.placeholder)').length : 0;
-    el.textContent = '— ' + realItems + ' work' + (realItems !== 1 ? 's' : '');
+    var year = el.getAttribute('data-count-year');
+    var sec  = document.querySelector('.year-section[data-year="' + year + '"]');
+    var n    = sec ? sec.querySelectorAll('.strip').length : 0;
+    el.textContent = '— ' + n + ' work' + (n !== 1 ? 's' : '');
   });
 
-  // ── Year tab navigation ───────────────────────────────────────────────────
-  const scrollArea = document.getElementById('scroll-area');
-  const tabs = document.querySelectorAll('.year-tab');
+  // ── Vertical scroll → horizontal ──────────────────────────────────────────
+  var scrollArea = document.getElementById('scroll-area');
+  scrollArea.addEventListener('wheel', function(e) {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      e.preventDefault();
+      scrollArea.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
 
+  // ── Year tab navigation ────────────────────────────────────────────────────
+  var tabs = document.querySelectorAll('.year-tab');
   tabs.forEach(function(tab) {
     tab.addEventListener('click', function() {
-      const year = this.getAttribute('data-year');
-      const section = document.querySelector('.year-section[data-year="' + year + '"]');
-      if (!section) return;
-      // scroll the section into view
-      scrollArea.scrollTo({ left: section.offsetLeft, behavior: 'smooth' });
-      // update active tab
+      var year = this.getAttribute('data-year');
+      var sec  = document.querySelector('.year-section[data-year="' + year + '"]');
+      if (!sec) return;
+      scrollArea.scrollTo({ left: sec.offsetLeft - 80, behavior: 'smooth' });
       tabs.forEach(function(t) { t.classList.remove('active'); });
       this.classList.add('active');
     });
   });
 
-  // Update active tab as user scrolls
   scrollArea.addEventListener('scroll', function() {
-    const sections = document.querySelectorAll('.year-section');
-    const midX = scrollArea.scrollLeft + scrollArea.offsetWidth / 2;
-    sections.forEach(function(sec) {
-      const left  = sec.offsetLeft;
-      const right = left + sec.offsetWidth;
-      if (midX >= left && midX < right) {
-        const year = sec.getAttribute('data-year');
+    var midX = scrollArea.scrollLeft + scrollArea.offsetWidth / 2;
+    document.querySelectorAll('.year-section').forEach(function(sec) {
+      if (midX >= sec.offsetLeft && midX < sec.offsetLeft + sec.offsetWidth) {
+        var y = sec.getAttribute('data-year');
         tabs.forEach(function(t) {
-          t.classList.toggle('active', t.getAttribute('data-year') === year);
+          t.classList.toggle('active', t.getAttribute('data-year') === y);
         });
       }
     });
-    // parallax background
-    const bgImg = document.getElementById('bg-img');
-    if (bgImg) {
-      bgImg.style.transform = 'translateX(' + (-scrollArea.scrollLeft * 0.3) + 'px)';
-    }
   });
 
-  // ── Lightbox ──────────────────────────────────────────────────────────────
-  const lightbox         = document.getElementById('lightbox');
-  const lightboxImg      = document.getElementById('lightbox-img');
-  const lightboxCaption  = document.getElementById('lightbox-caption');
-  const lightboxBackdrop = document.getElementById('lightbox-backdrop');
-  const lightboxClose    = document.getElementById('lightbox-close');
+  // ── Lightbox ───────────────────────────────────────────────────────────────
+  var lightbox   = document.getElementById('lightbox');
+  var lbImg      = document.getElementById('lightbox-img');
+  var lbTitle    = document.getElementById('lightbox-title');
+  var lbSub      = document.getElementById('lightbox-sub');
+  var lbBackdrop = document.getElementById('lightbox-backdrop');
+  var lbClose    = document.getElementById('lightbox-close');
 
-  function openLightbox(src, caption) {
-    lightboxImg.src        = src;
-    lightboxCaption.textContent = caption || '';
+  function openLightbox(src, caption, sub) {
+    lbImg.src = src;
+    lbTitle.textContent = caption || '';
+    lbSub.textContent   = sub || '';
     lightbox.classList.add('open');
-    document.body.style.overflow = 'hidden';
   }
-
   function closeLightbox() {
     lightbox.classList.remove('open');
-    document.body.style.overflow = '';
-    // clear src after transition
-    setTimeout(function() { lightboxImg.src = ''; }, 320);
+    setTimeout(function() { lbImg.src = ''; }, 320);
   }
 
-  lightboxBackdrop.addEventListener('click', closeLightbox);
-  lightboxClose.addEventListener('click', closeLightbox);
+  lbBackdrop.addEventListener('click', closeLightbox);
+  lbClose.addEventListener('click', closeLightbox);
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeLightbox();
   });
 
-  // Wire up all real grid items for lightbox
-  function wireGridItems() {
-    document.querySelectorAll('.grid-item:not(.placeholder)').forEach(function(item) {
-      item.addEventListener('click', function() {
-        const img     = this.querySelector('img');
-        const caption = this.getAttribute('data-caption') || '';
-        if (img) openLightbox(img.src, caption);
-      });
+  document.querySelectorAll('.strip').forEach(function(strip) {
+    strip.addEventListener('click', function() {
+      var img     = this.querySelector('img');
+      var caption = this.getAttribute('data-caption') || '';
+      var sub     = this.getAttribute('data-sub') || '';
+      if (img) openLightbox(img.src, caption, sub);
     });
-  }
-  wireGridItems();
+  });
 
-  // ── Diamond nav transition ────────────────────────────────────────────────
-  const DIAMOND_COLORS = ['#111','#333','#555','#222','#444'];
 
+  // ── Slideshow strips ───────────────────────────────────────────────────────
+  document.querySelectorAll('.strip[data-slideshow]').forEach(function(strip) {
+    var slides = strip.querySelectorAll('.slide');
+    if (slides.length < 2) return;
+    var idx = 0;
+
+    var badge = document.createElement('div');
+    badge.className = 'slide-badge';
+    badge.textContent = '1 / ' + slides.length;
+    strip.appendChild(badge);
+
+    var prev = document.createElement('button');
+    prev.className = 'slide-arrow prev'; prev.innerHTML = '&#8249;';
+    var next = document.createElement('button');
+    next.className = 'slide-arrow next'; next.innerHTML = '&#8250;';
+    strip.appendChild(prev); strip.appendChild(next);
+
+    function goTo(n) {
+      slides[idx].classList.remove('active');
+      idx = (n + slides.length) % slides.length;
+      slides[idx].classList.add('active');
+      badge.textContent = (idx + 1) + ' / ' + slides.length;
+    }
+
+    prev.addEventListener('click', function(e) { e.stopPropagation(); goTo(idx - 1); });
+    next.addEventListener('click', function(e) { e.stopPropagation(); goTo(idx + 1); });
+  });
+
+  // Override lightbox click for slideshow strips to open current slide
+  document.querySelectorAll('.strip[data-slideshow]').forEach(function(strip) {
+    strip.addEventListener('click', function() {
+      var active = this.querySelector('.slide.active img');
+      var caption = this.getAttribute('data-caption') || '';
+      var sub     = this.getAttribute('data-sub') || '';
+      if (active) openLightbox(active.src, caption, sub);
+    });
+  });
+
+  // ── Diamond nav transition ─────────────────────────────────────────────────
   function spawnDiamonds(ox, oy, cb) {
-    const COUNT = 28;
-    const wrap  = document.createElement('div');
+    var wrap = document.createElement('div');
     wrap.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;';
     document.body.appendChild(wrap);
-    let done = 0;
+    var done = 0, COUNT = 28;
     for (var i = 0; i < COUNT; i++) {
       (function() {
-        const d     = document.createElement('div');
-        const size  = 12 + Math.random() * 44;
-        const angle = Math.random() * 360;
-        const dist  = 80 + Math.random() * Math.max(window.innerWidth, window.innerHeight) * 0.9;
-        const tx    = Math.cos(angle * Math.PI/180) * dist;
-        const ty    = Math.sin(angle * Math.PI/180) * dist;
-        const rot   = Math.random() * 360;
-        const delay = Math.random() * 120;
-        const dur   = 300 + Math.random() * 200;
-        const col   = DIAMOND_COLORS[Math.floor(Math.random() * DIAMOND_COLORS.length)];
+        var d = document.createElement('div');
+        var size = 12 + Math.random()*44, angle = Math.random()*360;
+        var dist = 80 + Math.random()*Math.max(window.innerWidth,window.innerHeight)*0.9;
+        var tx = Math.cos(angle*Math.PI/180)*dist, ty = Math.sin(angle*Math.PI/180)*dist;
+        var rot = Math.random()*360, delay = Math.random()*120, dur = 300+Math.random()*200;
+        var cols = ['#111','#333','#555','#222','#444'];
         d.style.cssText = [
-          'position:absolute',
-          'left:' + (ox - size/2) + 'px',
-          'top:'  + (oy - size/2) + 'px',
-          'width:' + size + 'px',
-          'height:' + size + 'px',
-          'background:' + col,
+          'position:absolute','left:'+(ox-size/2)+'px','top:'+(oy-size/2)+'px',
+          'width:'+size+'px','height:'+size+'px',
+          'background:'+cols[Math.floor(Math.random()*cols.length)],
           'clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
           'opacity:1',
-          'transform:translate(0,0) rotate(' + rot + 'deg) scale(1)',
-          'transition:transform ' + dur + 'ms cubic-bezier(.2,.8,.4,1) ' + delay + 'ms,' +
-            'opacity ' + (dur*0.6) + 'ms ease ' + (delay + dur*0.4) + 'ms'
+          'transform:translate(0,0) rotate('+rot+'deg) scale(1)',
+          'transition:transform '+dur+'ms cubic-bezier(.2,.8,.4,1) '+delay+'ms,'+
+            'opacity '+(dur*0.6)+'ms ease '+(delay+dur*0.4)+'ms'
         ].join(';');
         wrap.appendChild(d);
-        requestAnimationFrame(function() { requestAnimationFrame(function() {
-          d.style.transform = 'translate(' + tx + 'px,' + ty + 'px) rotate(' + (rot+180) + 'deg) scale(0.1)';
-          d.style.opacity   = '0';
-        }); });
-        setTimeout(function() {
-          done++;
-          if (done === COUNT) { wrap.remove(); if (cb) cb(); }
-        }, dur + delay + 50);
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){
+          d.style.transform='translate('+tx+'px,'+ty+'px) rotate('+(rot+180)+'deg) scale(0.1)';
+          d.style.opacity='0';
+        });});
+        setTimeout(function(){ done++; if(done===COUNT){wrap.remove();if(cb)cb();} }, dur+delay+50);
       })();
     }
   }
 
   document.querySelectorAll('.sidebar-nav-item').forEach(function(link) {
     link.addEventListener('click', function(e) {
-      const href = this.getAttribute('href');
+      var href = this.getAttribute('href');
       if (!href || href === '#') return;
       e.preventDefault();
-      const rect = this.getBoundingClientRect();
-      spawnDiamonds(rect.left + rect.width/2, rect.top + rect.height/2, function() {
+      var rect = this.getBoundingClientRect();
+      spawnDiamonds(rect.left+rect.width/2, rect.top+rect.height/2, function() {
         window.location.href = href;
       });
     });

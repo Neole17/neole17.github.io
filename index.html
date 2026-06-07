@@ -9,55 +9,124 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; background: #020818; overflow: hidden; }
+    #main-root { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 
-    html, body {
+    /* particle canvas sits below main canvas */
+    #particle-canvas {
+      position: absolute; top: 0; left: 0;
       width: 100%; height: 100%;
-      background: #020818;
-      overflow: hidden;
-    }
-
-    #main-root {
-      width: 100vw; height: 100vh;
-      position: relative;
-      overflow: hidden;
+      display: block; z-index: 5;
+      pointer-events: none;
     }
 
     #Neole17 {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      z-index: 10;
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: block; z-index: 10;
     }
-
     #triggerZone {
-      position: absolute;
-      left: 0; top: 0;
+      position: absolute; left: 0; top: 0;
       width: 30px; height: 100%;
-      z-index: 20;
-      cursor: pointer;
+      z-index: 20; cursor: pointer;
     }
-
     #dateDisplay {
-      position: absolute;
-      top: 16px; right: 16px;
-      z-index: 30;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: rgba(100,200,255,0.5);
-      text-align: right;
-      pointer-events: none;
-      line-height: 1.6;
+      position: absolute; top: 16px; right: 16px;
+      z-index: 30; font-family: 'Orbitron', sans-serif;
+      font-size: 11px; letter-spacing: 3px;
+      color: rgba(100,200,255,0.5); text-align: right;
+      pointer-events: none; line-height: 1.6;
     }
   </style>
 </head>
 <body>
   <div id="main-root">
+    <canvas id="particle-canvas"></canvas>
     <canvas id="Neole17"></canvas>
     <div id="triggerZone"></div>
   </div>
+
+  <script>
+  // ── Particle system: white squares drifting from hub origin ──────────────
+  (function() {
+    var canvas = document.getElementById('particle-canvas');
+    var ctx    = canvas.getContext('2d');
+    var W, H, hubX, hubY;
+    var particles = [];
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+      hubX = -34; // same as -HUB_R + 18 in canvas.js
+      hubY = H / 2;
+    }
+
+    function spawn() {
+      // angle: only fan rightward (-70deg to +70deg)
+      var spread = 70 * Math.PI / 180;
+      var angle  = -spread + Math.random() * spread * 2;
+      var speed  = 0.3 + Math.random() * 0.9;
+      var size   = 2 + Math.random() * 5;
+      var life   = 0;
+      var maxLife= 180 + Math.random() * 240;
+      particles.push({
+        x: hubX, y: hubY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: size,
+        life: life,
+        maxLife: maxLife,
+        rot: Math.random() * Math.PI,
+        rotV: (Math.random() - 0.5) * 0.02,
+      });
+    }
+
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+      hubY = H / 2; // keep centred on resize
+
+      // spawn ~1.2 particles per frame
+      if (Math.random() < 0.6) spawn();
+      if (Math.random() < 0.6) spawn();
+
+      for (var i = particles.length - 1; i >= 0; i--) {
+        var p = particles[i];
+        p.x   += p.vx;
+        p.y   += p.vy;
+        p.rot += p.rotV;
+        p.life++;
+
+        // fade in then out
+        var t     = p.life / p.maxLife;
+        var alpha = t < 0.1
+          ? t / 0.1
+          : t > 0.7
+            ? 1 - (t - 0.7) / 0.3
+            : 1;
+        alpha *= 0.22; // subtle overall opacity
+
+        if (p.life >= p.maxLife || p.x > W + 20) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle   = '#ffffff';
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    tick();
+  })();
+  </script>
 
   <script type="module" src="./src/main.js"></script>
 </body>

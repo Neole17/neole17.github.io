@@ -144,17 +144,17 @@ export function createCanvas(root, canvas, state) {
       ctx.save();
       drawPoly(hub, sh.pts, ep,
         isActive ? `rgba(160,50,0,${.72+ep*.15})` : `rgba(0,40,120,${.62+ep*.1})`,
-        isActive ? 'rgba(255,130,60,.9)' : 'rgba(70,170,255,.55)',
+        isActive ? 'rgba(247, 254, 255, 0.94)' : 'rgba(70,170,255,.55)',
         isActive ? 2 : 1);
       ctx.globalAlpha = ep * (isActive ? .6 : .32);
       drawPoly(hub, sh.hlPts, ep,
-        isActive ? 'rgba(255,220,180,.65)' : 'rgba(180,230,255,.55)', '', 0);
+        isActive ? 'rgba(184, 191, 194, 0.81)' : 'rgba(180,230,255,.55)', '', 0);
       ctx.globalAlpha = ep * .25;
       const cs = sh.crackPts.map(p => polarToCart(hub, rI + (p.r-rI)*ep, p.a));
       if (cs.length >= 2) {
         ctx.beginPath(); ctx.moveTo(cs[0].x, cs[0].y);
         for (let k = 1; k < cs.length; k++) ctx.lineTo(cs[k].x, cs[k].y);
-        ctx.strokeStyle = isActive ? 'rgba(255,200,160,.5)' : 'rgba(140,200,255,.4)';
+        ctx.strokeStyle = isActive ? 'rgba(189, 194, 196, 0.5)' : 'rgba(140,200,255,.4)';
         ctx.lineWidth = .8; ctx.stroke();
       }
       ctx.restore();
@@ -167,14 +167,14 @@ export function createCanvas(root, canvas, state) {
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle    = isActive ? '#fff' : 'rgba(160,220,255,.9)';
-        if (isActive) { ctx.shadowColor = 'rgba(255,140,60,.9)'; ctx.shadowBlur = 12; }
+        if (isActive) { ctx.shadowColor = 'rgba(239, 246, 255, 0.9)'; ctx.shadowBlur = 12; }
         ctx.fillText(label, hub.x + midR*Math.cos(angle), hub.y + midR*Math.sin(angle));
         ctx.restore();
       }
 
       if (isActive && ep > .75) {
         const aa = (ep-.75)/.25;
-        ctx.save(); ctx.globalAlpha = aa; ctx.fillStyle = '#ff9060';
+        ctx.save(); ctx.globalAlpha = aa; ctx.fillStyle = '#eef8ff';
         ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText('▶', hub.x + (rO+14)*Math.cos(angle), hub.y + (rO+14)*Math.sin(angle));
         ctx.restore();
