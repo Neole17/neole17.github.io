@@ -9,31 +9,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      width: 100%; height: 100%;
-      overflow: hidden;
-      font-family: 'Rajdhani', sans-serif;
-      color: #1a1a1a;
-    }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Rajdhani', sans-serif; color: #1a1a1a; }
 
     #portfolio-root {
-      width: 100vw; height: 100vh;
-      display: flex;
-      overflow: hidden;
-      position: relative;
+      width: 100vw; height: 100vh; display: flex;
+      overflow: hidden; position: relative;
       background: linear-gradient(160deg, #faf9f7 0%, #f3f1ed 50%, #edf0f5 100%);
     }
-
-    /* faint dot grid */
     #portfolio-root::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      content: ''; position: fixed; inset: 0; z-index: 1; pointer-events: none;
       background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
       background-size: 32px 32px;
     }
 
-    /* ── Sidebar ──────────────────────────────────────────────────── */
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
     #sidebar {
       position: relative; z-index: 30; flex-shrink: 0;
       width: 52px; height: 100vh;
@@ -43,231 +32,174 @@
       align-items: center; padding: 52px 0 16px; gap: 2px;
     }
     .year-tab {
-      writing-mode: vertical-rl; text-orientation: mixed;
-      transform: rotate(180deg);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px; font-weight: 700; letter-spacing: 3px;
-      color: rgba(0,0,0,0.22); cursor: pointer;
-      padding: 18px 8px; border: none; background: transparent;
+      writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);
+      font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      color: rgba(0,0,0,0.22); cursor: pointer; padding: 18px 8px;
+      border: none; background: transparent;
       transition: color 0.2s, background 0.2s;
-      border-left: 2px solid transparent;
-      width: 100%; text-align: center;
+      border-left: 2px solid transparent; width: 100%; text-align: center;
     }
     .year-tab:hover { color: rgba(0,0,0,0.75); background: rgba(0,0,0,0.03); }
     .year-tab.active { color: #111; border-left-color: #111; background: rgba(0,0,0,0.05); }
-
-    #sidebar-nav {
-      margin-top: auto; display: flex; flex-direction: column;
-      align-items: center; gap: 0; width: 100%;
-    }
+    #sidebar-nav { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 0; width: 100%; }
     .sidebar-nav-item {
       writing-mode: vertical-rl; transform: rotate(180deg);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 8px; letter-spacing: 2px;
-      color: rgba(0,0,0,0.22); text-decoration: none;
-      padding: 10px 8px; transition: color 0.2s;
+      font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 2px;
+      color: rgba(0,0,0,0.22); text-decoration: none; padding: 10px 8px; transition: color 0.2s;
     }
     .sidebar-nav-item:hover { color: rgba(0,0,0,0.7); }
     .sidebar-nav-item.active { color: rgba(0,0,0,0.38); cursor: default; }
 
-    /* ── Scroll area ──────────────────────────────────────────────── */
+    /* ── Scroll ──────────────────────────────────────────────────────────── */
     #scroll-area {
-      position: relative; z-index: 20;
-      flex: 1; height: 100vh;
-      overflow-x: scroll; overflow-y: hidden;
-      scrollbar-width: none;
+      position: relative; z-index: 20; flex: 1; height: 100vh;
+      overflow-x: scroll; overflow-y: hidden; scrollbar-width: none;
     }
     #scroll-area::-webkit-scrollbar { display: none; }
-
     #scroll-track {
       display: flex; flex-direction: row; align-items: stretch;
-      height: 100vh; width: max-content;
-      padding: 0 80px; /* breathing room at edges */
+      height: 100vh; width: max-content; padding: 0 80px;
     }
 
-    /* ── Year section ─────────────────────────────────────────────── */
-    .year-section {
-      display: flex; flex-direction: column;
-      height: 100vh; flex-shrink: 0;
-      position: relative;
-    }
-
-    /* year label top-left */
+    /* ── Year section ────────────────────────────────────────────────────── */
+    .year-section { display: flex; flex-direction: column; height: 100vh; flex-shrink: 0; position: relative; }
     .year-heading {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px; font-weight: 700; letter-spacing: 5px;
-      color: rgba(0,0,0,0.28);
-      padding: 20px 0 0 4px;
-      flex-shrink: 0;
+      font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 5px;
+      color: rgba(0,0,0,0.28); padding: 20px 0 0 4px; flex-shrink: 0;
     }
-    .year-count {
-      font-size: 9px; letter-spacing: 2px; color: rgba(0,0,0,0.2);
-      padding: 4px 0 0 4px; margin-bottom: 0; flex-shrink: 0;
-    }
+    .year-count { font-size: 9px; letter-spacing: 2px; color: rgba(0,0,0,0.2); padding: 4px 0 0 4px; flex-shrink: 0; }
+    .strip-row { flex: 1; display: flex; flex-direction: row; align-items: center; gap: 28px; padding: 40px 0 60px; }
 
-    /* ── Strip row: images laid out horizontally ─────────────────── */
-    .strip-row {
-      flex: 1;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 28px; /* space between images */
-      padding: 40px 0 60px;
-    }
-
-    /* ── Each image strip ────────────────────────────────────────── */
+    /* ── Strip ───────────────────────────────────────────────────────────── */
     .strip {
-      position: relative;
-      height: 100%;
-      /* default width — tall portrait strip */
-      width: 160px;
-      flex-shrink: 0;
-      cursor: pointer;
-      overflow: hidden;
-      transition: width 0.4s cubic-bezier(.4,0,.2,1),
-                  box-shadow 0.3s;
+      position: relative; height: 100%; width: 160px; flex-shrink: 0;
+      cursor: pointer; overflow: hidden;
+      transition: box-shadow 0.3s;
     }
-    /* featured: wider */
-    .strip.featured {
-      width: 380px;
-    }
-    /* wide landscape pieces */
-    .strip.wide {
-      width: 260px;
-    }
-    .strip img {
-      width: 100%; height: 100%;
-      object-fit: cover; display: block;
+    .strip.featured { width: 380px; }
+    .strip.wide     { width: 260px; }
+
+    /* The strip always shows only its cover image */
+    .strip > img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
       transition: transform 0.4s ease;
     }
-    .strip:hover img { transform: scale(1.03); }
-    .strip:hover {
-      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-      z-index: 5;
-    }
+    .strip:hover > img { transform: scale(1.03); }
+    .strip:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.12); z-index: 5; }
 
-    /* label above strip on hover */
+    /* Hover label */
     .strip-label {
-      position: absolute;
-      top: -36px; left: 0;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9px; letter-spacing: 3px;
-      color: rgba(0,0,0,0.5);
-      white-space: nowrap;
-      opacity: 0;
-      transform: translateY(4px);
-      transition: opacity 0.2s, transform 0.2s;
-      pointer-events: none;
+      position: absolute; top: -36px; left: 0;
+      font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 3px;
+      color: rgba(0,0,0,0.5); white-space: nowrap;
+      opacity: 0; transform: translateY(4px);
+      transition: opacity 0.2s, transform 0.2s; pointer-events: none;
     }
     .strip-sublabel {
-      position: absolute;
-      top: -20px; left: 0;
-      font-size: 9px; letter-spacing: 2px;
-      color: rgba(0,0,0,0.3);
-      white-space: nowrap;
-      opacity: 0;
-      transform: translateY(4px);
-      transition: opacity 0.2s 0.04s, transform 0.2s 0.04s;
-      pointer-events: none;
-      font-family: 'Rajdhani', sans-serif;
+      position: absolute; top: -20px; left: 0;
+      font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: 2px;
+      color: rgba(0,0,0,0.3); white-space: nowrap;
+      opacity: 0; transform: translateY(4px);
+      transition: opacity 0.2s 0.04s, transform 0.2s 0.04s; pointer-events: none;
     }
     .strip:hover .strip-label,
     .strip:hover .strip-sublabel { opacity: 1; transform: translateY(0); }
 
-    /* vertical divider between years */
+    /* multi-image indicator dot on cover */
+    .multi-badge {
+      position: absolute; top: 10px; right: 10px;
+      font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 1px;
+      color: rgba(255,255,255,0.8); background: rgba(0,0,0,0.45);
+      padding: 3px 7px; pointer-events: none; z-index: 4;
+    }
+
+    /* Year divider */
     .year-divider {
-      width: 1px; height: 60vh;
-      align-self: center; flex-shrink: 0;
-      margin: 0 60px;
+      width: 1px; height: 60vh; align-self: center; flex-shrink: 0; margin: 0 60px;
       background: linear-gradient(180deg, transparent, rgba(0,0,0,0.12) 30%, rgba(0,0,0,0.12) 70%, transparent);
     }
 
-
-    /* ── Slideshow strip ──────────────────────────────────────────── */
-    /* Usage: add data-slideshow to .strip, wrap each img in .slide div */
-    .strip .slide { display: none; width: 100%; height: 100%; }
-    .strip .slide.active { display: block; }
-    .strip .slide img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
-    .strip[data-slideshow]:hover .slide.active img { transform: scale(1.03); }
-
-    /* counter badge */
-    .slide-badge {
-      position: absolute; bottom: 10px; right: 10px;
-      font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 1px;
-      color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.4);
-      padding: 3px 7px; pointer-events: none; z-index: 4;
-    }
-    /* prev/next arrows */
-    .slide-arrow {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(0,0,0,0.35); color: #fff;
-      border: none; cursor: pointer; font-size: 18px; line-height: 1;
-      padding: 10px 8px; opacity: 0; transition: opacity 0.2s; z-index: 5;
-    }
-    .slide-arrow.prev { left: 0; }
-    .slide-arrow.next { right: 0; }
-    .strip[data-slideshow]:hover .slide-arrow { opacity: 1; }
-
-    /* ── Lightbox ─────────────────────────────────────────────────── */
+    /* ── Lightbox ────────────────────────────────────────────────────────── */
     #lightbox {
       position: fixed; inset: 0; z-index: 200;
       display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
     }
     #lightbox.open { opacity: 1; pointer-events: auto; }
-    #lightbox-backdrop {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0.92); cursor: pointer;
-    }
+
+    #lightbox-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.92); cursor: pointer; }
+
     #lightbox-img-wrap {
       position: relative; z-index: 2;
       max-width: 88vw; max-height: 88vh;
       display: flex; align-items: center; justify-content: center;
     }
     #lightbox-img {
-      max-width: 88vw; max-height: 88vh;
-      object-fit: contain; display: block;
+      max-width: 88vw; max-height: 88vh; object-fit: contain; display: block;
       box-shadow: 0 0 100px rgba(0,0,0,0.6);
-      transform: scale(0.94);
-      transition: transform 0.35s cubic-bezier(.2,1,.4,1), opacity 0.15s;
+      transform: scale(0.94); transition: transform 0.35s cubic-bezier(.2,1,.4,1), opacity 0.12s;
     }
     #lightbox.open #lightbox-img { transform: scale(1); }
+
     #lightbox-title {
       position: absolute; top: -32px; left: 0;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px; letter-spacing: 4px;
-      color: rgba(255,255,255,0.6);
+      font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 4px; color: rgba(255,255,255,0.6);
     }
     #lightbox-sub {
       position: absolute; top: -16px; left: 0;
-      font-size: 11px; letter-spacing: 2px;
-      color: rgba(255,255,255,0.35);
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.35);
+    }
+    #lightbox-counter {
+      position: absolute; top: -32px; right: 0;
+      font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.3);
     }
     #lightbox-close {
-      position: absolute; top: -36px; right: 0;
-      font-family: 'Orbitron', sans-serif; font-size: 9px;
-      letter-spacing: 3px; color: rgba(255,255,255,0.4);
-      cursor: pointer; background: none; border: none;
-      transition: color 0.2s;
+      position: absolute; bottom: -32px; right: 0;
+      font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 3px;
+      color: rgba(255,255,255,0.35); cursor: pointer; background: none; border: none; transition: color 0.2s;
     }
     #lightbox-close:hover { color: #fff; }
 
-    /* ── Corner brackets ──────────────────────────────────────────── */
+    /* Lightbox prev/next — only shown when multiple images */
+    .lb-arrow {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 22px; cursor: pointer; padding: 16px 14px;
+      z-index: 3; transition: background 0.2s, color 0.2s;
+      display: none; /* hidden by default, shown when multi */
+    }
+    .lb-arrow:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    #lb-prev { left: 20px; }
+    #lb-next { right: 20px; }
+
+    /* ── Corner brackets ─────────────────────────────────────────────────── */
     .corner { position: fixed; z-index: 25; pointer-events: none; }
     .corner.tl { top: 8px; left: 60px; }
     .corner.tr { top: 8px; right: 8px; }
     .corner.bl { bottom: 8px; left: 60px; }
     .corner.br { bottom: 8px; right: 8px; }
 
-    /* ── Clock ────────────────────────────────────────────────────── */
+    /* ── Clock ───────────────────────────────────────────────────────────── */
     #dateDisplay {
       position: fixed; top: 12px; right: 18px; z-index: 30;
+      font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 3px;
+      color: rgba(0,0,0,0.25); text-align: right; pointer-events: none; line-height: 1.6;
+    }
+
+    /* ── Audio ticker ─────────────────────────────────────────────── */
+    #audio-ticker {
+      position: fixed; bottom: 12px; left: 60px;
+      z-index: 50; overflow: hidden;
+      width: 240px; height: 18px;
+      pointer-events: none;
+    }
+    #audio-ticker-inner {
+      position: absolute; white-space: nowrap;
       font-family: 'Orbitron', sans-serif;
-      font-size: 10px; letter-spacing: 3px;
-      color: rgba(0,0,0,0.25); text-align: right;
-      pointer-events: none; line-height: 1.6;
+      font-size: 9px; letter-spacing: 2px;
+      color: rgba(150,150,160,0.45);
+      will-change: transform;
     }
   </style>
 </head>
@@ -275,13 +207,8 @@
 <div id="portfolio-root">
 
   <aside id="sidebar">
-    <!--
-      TO ADD A YEAR: add a .year-tab here, and a matching .year-section
-      + .year-divider in #scroll-track below.
-    -->
     <button class="year-tab active" data-year="2026">2026</button>
     <button class="year-tab"        data-year="2025">2025</button>
-
     <div id="sidebar-nav">
       <a class="sidebar-nav-item" href="./index.html">HOME</a>
       <a class="sidebar-nav-item" href="./about.html">ABOUT</a>
@@ -293,127 +220,126 @@
   <div id="scroll-area">
     <div id="scroll-track">
 
-      <!-- ══ 2026 ═══════════════════════════════════════════════════ -->
-      <!--
-        Strip types: default (narrow portrait. 160px), .featured (wide. 380px), .wide (medium landscape. 260px)
-        data-caption = title shown above on hover
-        data-sub     = subtitle / medium line
-      -->
+      <!-- ══ 2026 ════════════════════════════════════════════════════════════
+           Strip types:  (default) 160px  |  .wide 260px  |  .featured 380px
+           Single image:   <img src="..." alt=""> directly inside .strip
+           Multi-image:    data-images="path1|path2|path3" on .strip
+                           The first path is the cover shown in the strip.
+                           All images open in lightbox with prev/next arrows.
+      ══════════════════════════════════════════════════════════════════════ -->
       <section class="year-section" data-year="2026">
         <div class="year-heading">2026</div>
         <div class="year-count" data-count-year="2026"></div>
         <div class="strip-row">
 
           <div class="strip featured"
-               data-caption="WITCH BONES"
-               data-sub="Character Design">
+               data-caption="WITCH BONES" data-sub="Character Design">
             <div class="strip-label">WITCH BONES</div>
-            <div class="strip-sublabel">Character Design</div>
+            <div class="strip-sublabel">Concept Art</div>
             <img src="./assets/images/portfolio/2026/T2 final render 1.png" alt="Witch Bones">
           </div>
 
           <div class="strip wide"
-               data-caption="ENVIRONMENTAL SKETCH"
-               data-sub="Concept Art">
+               data-caption="ENVIRONMENTAL SKETCH" data-sub="Concept Art">
             <div class="strip-label">ENVIRONMENTAL SKETCH</div>
             <div class="strip-sublabel">Concept Art</div>
             <img src="./assets/images/portfolio/2026/Environmental sketch.png" alt="Environmental Art Concept">
           </div>
 
           <div class="strip wide"
-               data-caption="VISCOM TERM 3"
-               data-sub="Environmental Art Practice">
+               data-caption="VISCOM TERM 3" data-sub="Environmental Art Practice">
             <div class="strip-label">VISCOM TERM 3</div>
             <div class="strip-sublabel">Environmental Art Practice</div>
             <img src="./assets/images/portfolio/2026/VISCOM Term3 Week 1.png" alt="Environmental Art Practice">
           </div>
 
           <div class="strip"
-               data-caption="HARD MACHINERY"
-               data-sub="Industrial Sketches">
+               data-caption="HARD MACHINERY" data-sub="Industrial Sketches">
             <div class="strip-label">HARD MACHINERY</div>
             <div class="strip-sublabel">Industrial Sketches</div>
             <img src="./assets/images/portfolio/2026/hard machinery sketch.png" alt="Hard Machinery Sketches">
           </div>
 
           <div class="strip wide"
-               data-caption="FRANKENSTEIN"
-               data-sub="Concept Storyboard">
+               data-caption="FRANKENSTEIN" data-sub="Concept Storyboard — Mary Shelley">
             <div class="strip-label">FRANKENSTEIN</div>
             <div class="strip-sublabel">Concept Storyboard — Mary Shelley</div>
             <img src="./assets/images/portfolio/2026/frankenstein.jpg" alt="Frankenstein Storyboard">
           </div>
 
           <div class="strip"
-               data-caption="ASSEMBLAGE"
-               data-sub="Mixed Media">
+               data-caption="ASSEMBLAGE" data-sub="Mixed Media">
             <div class="strip-label">ASSEMBLAGE</div>
             <div class="strip-sublabel">Mixed Media</div>
             <img src="./assets/images/portfolio/2026/assemblage00.jpeg" alt="Assemblage">
           </div>
 
           <div class="strip featured"
-               data-caption="WATCHMAKER"
-               data-sub="Character Concept">
+               data-caption="WATCHMAKER" data-sub="Character Concept">
             <div class="strip-label">WATCHMAKER</div>
             <div class="strip-sublabel">Character Concept</div>
             <img src="./assets/images/portfolio/2026/Watchmaker part 2.png" alt="Character Concept - Watchmaker">
           </div>
+
+          <!--
+            MULTI-IMAGE EXAMPLE:
+            <div class="strip featured"
+                 data-caption="MY SERIES" data-sub="Illustration Series"
+                 data-images="./assets/images/1.jpg|./assets/images/2.jpg|./assets/images/3.jpg">
+              <div class="strip-label">MY SERIES</div>
+              <div class="strip-sublabel">Illustration Series</div>
+              <img src="./assets/images/1.jpg" alt="My Series">
+            </div>
+          -->
 
         </div>
       </section>
 
       <div class="year-divider"></div>
 
-      <!-- ══ 2025 ═══════════════════════════════════════════════════ -->
+      <!-- ══ 2025 ════════════════════════════════════════════════════════════ -->
       <section class="year-section" data-year="2025">
         <div class="year-heading">2025</div>
         <div class="year-count" data-count-year="2025"></div>
         <div class="strip-row">
 
           <div class="strip"
-               data-caption="CROW"
-               data-sub="Illustration">
+               data-caption="CROW" data-sub="Illustration">
             <div class="strip-label">CROW</div>
             <div class="strip-sublabel">Illustration</div>
             <img src="./assets/images/portfolio/2025/crow.jpeg" alt="Crow">
           </div>
 
           <div class="strip"
-               data-caption="DOVE — CHARITY"
-               data-sub="Illustration">
+               data-caption="DOVE — CHARITY" data-sub="Illustration">
             <div class="strip-label">DOVE — CHARITY</div>
             <div class="strip-sublabel">Illustration</div>
             <img src="./assets/images/portfolio/2025/dove_02.jpg" alt="Dove-charity">
           </div>
 
           <div class="strip wide"
-               data-caption="CAMERA SHOTS"
-               data-sub="VISCOM Exercise">
+               data-caption="CAMERA SHOTS" data-sub="VISCOM Exercise">
             <div class="strip-label">CAMERA SHOTS</div>
             <div class="strip-sublabel">VISCOM Exercise</div>
             <img src="./assets/images/portfolio/2025/VISCOM Week3 In-Class (2).png" alt="VISCOM Camera Shots Exercise">
           </div>
 
           <div class="strip wide"
-               data-caption="MOVIE COMPOSITIONS"
-               data-sub="VISCOM Exercise">
+               data-caption="MOVIE COMPOSITIONS" data-sub="VISCOM Exercise">
             <div class="strip-label">MOVIE COMPOSITIONS</div>
             <div class="strip-sublabel">VISCOM Exercise</div>
             <img src="./assets/images/portfolio/2025/viscom W1 movie comp 3.png" alt="VISCOM movie compositions">
           </div>
 
           <div class="strip wide"
-               data-caption="AIRPLANE"
-               data-sub="VISCOM Exercise">
+               data-caption="AIRPLANE" data-sub="VISCOM Week 8">
             <div class="strip-label">AIRPLANE</div>
-            <div class="strip-sublabel">VISCOM Exercise</div>
+            <div class="strip-sublabel">VISCOM Week 8</div>
             <img src="./assets/images/portfolio/2025/Week8 airplane.png" alt="VISCOM plane">
           </div>
 
           <div class="strip featured"
-               data-caption="ENCHANTED FOREST"
-               data-sub="Winter Formal Poster · 2025">
+               data-caption="ENCHANTED FOREST" data-sub="Winter Formal Poster · 2025">
             <div class="strip-label">ENCHANTED FOREST</div>
             <div class="strip-sublabel">Winter Formal Poster · 2025</div>
             <img src="./assets/images/portfolio/2025/WF_enchanted_forest.png" alt="Enchanted Forest">
@@ -428,9 +354,12 @@
   <!-- Lightbox -->
   <div id="lightbox">
     <div id="lightbox-backdrop"></div>
+    <button class="lb-arrow" id="lb-prev">&#8592;</button>
+    <button class="lb-arrow" id="lb-next">&#8594;</button>
     <div id="lightbox-img-wrap">
       <div id="lightbox-title"></div>
       <div id="lightbox-sub"></div>
+      <div id="lightbox-counter"></div>
       <button id="lightbox-close">&#10005; CLOSE</button>
       <img id="lightbox-img" src="" alt="">
     </div>
@@ -449,18 +378,15 @@
 
   // ── Clock ──────────────────────────────────────────────────────────────────
   var HOUR_NAMES = [
-    'Dark Hour','Hollow Hour','Grave Hour','Witching Hour',
-    'Bone Hour','False Hour','Pale Hour','Uneasy Hour',
-    'Waking Hour','Glass Hour','Ascendant Hour','Bright Hour',
-    'Zenith Hour','Verdict Hour','Haze Hour','Gold Hour',
-    'Shadow Hour','Fraying Hour','Threshold Hour','Ember Hour',
-    'Blue Hour','Velvet Hour','Dissolving Hour','Sleep Hour'
+    'Dark Hour','Hollow Hour','Grave Hour','Witching Hour','Bone Hour','False Hour',
+    'Pale Hour','Uneasy Hour','Waking Hour','Glass Hour','Ascendant Hour','Bright Hour',
+    'Zenith Hour','Verdict Hour','Haze Hour','Gold Hour','Shadow Hour','Fraying Hour',
+    'Threshold Hour','Ember Hour','Blue Hour','Velvet Hour','Dissolving Hour','Sleep Hour'
   ];
   function updateClock() {
     var el = document.getElementById('dateDisplay'), now = new Date();
     el.innerHTML = HOUR_NAMES[now.getHours()] + '<br>' +
-      String(now.getHours()).padStart(2,'0') + ':' +
-      String(now.getMinutes()).padStart(2,'0');
+      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
   }
   updateClock(); setInterval(updateClock, 30000);
 
@@ -470,6 +396,16 @@
     var sec  = document.querySelector('.year-section[data-year="' + year + '"]');
     var n    = sec ? sec.querySelectorAll('.strip').length : 0;
     el.textContent = '— ' + n + ' work' + (n !== 1 ? 's' : '');
+  });
+
+  // ── Multi-image badge on strips ────────────────────────────────────────────
+  document.querySelectorAll('.strip[data-images]').forEach(function(strip) {
+    var imgs = strip.getAttribute('data-images').split('|').filter(Boolean);
+    if (imgs.length < 2) return;
+    var badge = document.createElement('div');
+    badge.className = 'multi-badge';
+    badge.textContent = '1 — ' + imgs.length;
+    strip.appendChild(badge);
   });
 
   // ── Vertical scroll → horizontal ──────────────────────────────────────────
@@ -485,23 +421,18 @@
   var tabs = document.querySelectorAll('.year-tab');
   tabs.forEach(function(tab) {
     tab.addEventListener('click', function() {
-      var year = this.getAttribute('data-year');
-      var sec  = document.querySelector('.year-section[data-year="' + year + '"]');
-      if (!sec) return;
-      scrollArea.scrollTo({ left: sec.offsetLeft - 80, behavior: 'smooth' });
+      var sec = document.querySelector('.year-section[data-year="' + this.getAttribute('data-year') + '"]');
+      if (sec) scrollArea.scrollTo({ left: sec.offsetLeft - 80, behavior: 'smooth' });
       tabs.forEach(function(t) { t.classList.remove('active'); });
       this.classList.add('active');
     });
   });
-
   scrollArea.addEventListener('scroll', function() {
     var midX = scrollArea.scrollLeft + scrollArea.offsetWidth / 2;
     document.querySelectorAll('.year-section').forEach(function(sec) {
       if (midX >= sec.offsetLeft && midX < sec.offsetLeft + sec.offsetWidth) {
         var y = sec.getAttribute('data-year');
-        tabs.forEach(function(t) {
-          t.classList.toggle('active', t.getAttribute('data-year') === y);
-        });
+        tabs.forEach(function(t) { t.classList.toggle('active', t.getAttribute('data-year') === y); });
       }
     });
   });
@@ -511,73 +442,89 @@
   var lbImg      = document.getElementById('lightbox-img');
   var lbTitle    = document.getElementById('lightbox-title');
   var lbSub      = document.getElementById('lightbox-sub');
+  var lbCounter  = document.getElementById('lightbox-counter');
   var lbBackdrop = document.getElementById('lightbox-backdrop');
   var lbClose    = document.getElementById('lightbox-close');
+  var lbPrev     = document.getElementById('lb-prev');
+  var lbNext     = document.getElementById('lb-next');
 
-  function openLightbox(src, caption, sub) {
-    lbImg.src = src;
+  var lbImages  = [];   // current image list
+  var lbIdx     = 0;    // current index
+
+  function updateLbImage() {
+    lbImg.style.opacity = '0';
+    setTimeout(function() {
+      lbImg.src = lbImages[lbIdx];
+      lbImg.style.opacity = '1';
+    }, 100);
+    if (lbImages.length > 1) {
+      lbCounter.textContent = (lbIdx + 1) + ' / ' + lbImages.length;
+      lbPrev.style.display = 'block';
+      lbNext.style.display = 'block';
+    } else {
+      lbCounter.textContent = '';
+      lbPrev.style.display = 'none';
+      lbNext.style.display = 'none';
+    }
+  }
+
+  function openLightbox(images, caption, sub, startIdx) {
+    lbImages = images;
+    lbIdx    = startIdx || 0;
     lbTitle.textContent = caption || '';
     lbSub.textContent   = sub || '';
+    updateLbImage();
     lightbox.classList.add('open');
   }
+
   function closeLightbox() {
     lightbox.classList.remove('open');
-    setTimeout(function() { lbImg.src = ''; }, 320);
+    setTimeout(function() { lbImg.src = ''; lbImages = []; }, 320);
+  }
+
+  function lbGo(dir) {
+    lbIdx = (lbIdx + dir + lbImages.length) % lbImages.length;
+    updateLbImage();
   }
 
   lbBackdrop.addEventListener('click', closeLightbox);
   lbClose.addEventListener('click', closeLightbox);
+  lbPrev.addEventListener('click', function() { lbGo(-1); });
+  lbNext.addEventListener('click', function() { lbGo(1); });
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeLightbox();
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape')      closeLightbox();
+    if (e.key === 'ArrowLeft')   lbGo(-1);
+    if (e.key === 'ArrowRight')  lbGo(1);
   });
 
+  // Wire strips
   document.querySelectorAll('.strip').forEach(function(strip) {
     strip.addEventListener('click', function() {
-      var img     = this.querySelector('img');
       var caption = this.getAttribute('data-caption') || '';
       var sub     = this.getAttribute('data-sub') || '';
-      if (img) openLightbox(img.src, caption, sub);
+      var multi   = this.getAttribute('data-images');
+
+      if (multi) {
+        // multi-image: parse pipe-separated list
+        var imgs = multi.split('|').filter(Boolean);
+        openLightbox(imgs, caption, sub, 0);
+      } else {
+        var img = this.querySelector('img');
+        if (img) openLightbox([img.src], caption, sub, 0);
+      }
     });
   });
 
 
-  // ── Slideshow strips ───────────────────────────────────────────────────────
-  document.querySelectorAll('.strip[data-slideshow]').forEach(function(strip) {
-    var slides = strip.querySelectorAll('.slide');
-    if (slides.length < 2) return;
-    var idx = 0;
-
-    var badge = document.createElement('div');
-    badge.className = 'slide-badge';
-    badge.textContent = '1 / ' + slides.length;
-    strip.appendChild(badge);
-
-    var prev = document.createElement('button');
-    prev.className = 'slide-arrow prev'; prev.innerHTML = '&#8249;';
-    var next = document.createElement('button');
-    next.className = 'slide-arrow next'; next.innerHTML = '&#8250;';
-    strip.appendChild(prev); strip.appendChild(next);
-
-    function goTo(n) {
-      slides[idx].classList.remove('active');
-      idx = (n + slides.length) % slides.length;
-      slides[idx].classList.add('active');
-      badge.textContent = (idx + 1) + ' / ' + slides.length;
+  // Navigate via parent shell if available (preserves audio), else direct
+  function goTo(href) {
+    if (window.parent && window.parent.navigateTo) {
+      window.parent.navigateTo(href);
+    } else {
+      goTo(href);
     }
-
-    prev.addEventListener('click', function(e) { e.stopPropagation(); goTo(idx - 1); });
-    next.addEventListener('click', function(e) { e.stopPropagation(); goTo(idx + 1); });
-  });
-
-  // Override lightbox click for slideshow strips to open current slide
-  document.querySelectorAll('.strip[data-slideshow]').forEach(function(strip) {
-    strip.addEventListener('click', function() {
-      var active = this.querySelector('.slide.active img');
-      var caption = this.getAttribute('data-caption') || '';
-      var sub     = this.getAttribute('data-sub') || '';
-      if (active) openLightbox(active.src, caption, sub);
-    });
-  });
+  }
 
   // ── Diamond nav transition ─────────────────────────────────────────────────
   function spawnDiamonds(ox, oy, cb) {
@@ -587,19 +534,18 @@
     var done = 0, COUNT = 28;
     for (var i = 0; i < COUNT; i++) {
       (function() {
-        var d = document.createElement('div');
+        var d    = document.createElement('div');
         var size = 12 + Math.random()*44, angle = Math.random()*360;
         var dist = 80 + Math.random()*Math.max(window.innerWidth,window.innerHeight)*0.9;
-        var tx = Math.cos(angle*Math.PI/180)*dist, ty = Math.sin(angle*Math.PI/180)*dist;
-        var rot = Math.random()*360, delay = Math.random()*120, dur = 300+Math.random()*200;
+        var tx   = Math.cos(angle*Math.PI/180)*dist, ty = Math.sin(angle*Math.PI/180)*dist;
+        var rot  = Math.random()*360, delay = Math.random()*120, dur = 300+Math.random()*200;
         var cols = ['#111','#333','#555','#222','#444'];
         d.style.cssText = [
           'position:absolute','left:'+(ox-size/2)+'px','top:'+(oy-size/2)+'px',
           'width:'+size+'px','height:'+size+'px',
           'background:'+cols[Math.floor(Math.random()*cols.length)],
           'clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
-          'opacity:1',
-          'transform:translate(0,0) rotate('+rot+'deg) scale(1)',
+          'opacity:1','transform:translate(0,0) rotate('+rot+'deg) scale(1)',
           'transition:transform '+dur+'ms cubic-bezier(.2,.8,.4,1) '+delay+'ms,'+
             'opacity '+(dur*0.6)+'ms ease '+(delay+dur*0.4)+'ms'
         ].join(';');
@@ -612,20 +558,101 @@
       })();
     }
   }
-
   document.querySelectorAll('.sidebar-nav-item').forEach(function(link) {
     link.addEventListener('click', function(e) {
       var href = this.getAttribute('href');
       if (!href || href === '#') return;
       e.preventDefault();
       var rect = this.getBoundingClientRect();
-      spawnDiamonds(rect.left+rect.width/2, rect.top+rect.height/2, function() {
-        window.location.href = href;
-      });
+      spawnDiamonds(rect.left+rect.width/2, rect.top+rect.height/2, function() { goTo(href); });
     });
   });
 
 })();
 </script>
+<script>
+  // ── Audio (shared across pages via sessionStorage) ─────────────────────────
+  (function() {
+    // ── TRACKS — edit this list ─────────────────────────────────────────────
+    var TRACKS = [
+      // { src: './assets/audio/yourfile.mp3', title: 'Song Name', artist: 'Artist' },
+      { src: './assets/audio/placeholder.mp3', title: 'Placeholder', artist: 'Unknown Artist' },
+    ];
+
+    var STORAGE_KEY = 'p3_audio';
+    var audio  = new Audio();
+    var trackIdx = 0;
+    var offset   = 0;
+    var inner    = null;
+    var raf      = null;
+
+    function saveState() {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+        idx: trackIdx, time: audio.currentTime, paused: audio.paused
+      }));
+    }
+
+    function buildTicker() {
+      var wrap = document.createElement('div');
+      wrap.id  = 'audio-ticker';
+      inner    = document.createElement('div');
+      inner.id = 'audio-ticker-inner';
+      wrap.appendChild(inner);
+      document.body.appendChild(wrap);
+    }
+
+    function setTickerText() {
+      if (!inner || !TRACKS[trackIdx]) return;
+      var t = TRACKS[trackIdx];
+      var txt = t.title + '   —   ' + t.artist;
+      inner.textContent = txt + '     ·     ' + txt + '     ·     ';
+      offset = 0;
+    }
+
+    function tick() {
+      if (!inner) return;
+      offset -= 0.35;
+      var half = inner.scrollWidth / 2;
+      if (Math.abs(offset) >= half) offset = 0;
+      inner.style.transform = 'translateX(' + offset + 'px)';
+      raf = requestAnimationFrame(tick);
+    }
+
+    function loadTrack(idx, time, play) {
+      trackIdx = ((idx % TRACKS.length) + TRACKS.length) % TRACKS.length;
+      audio.src = TRACKS[trackIdx].src;
+      audio.currentTime = time || 0;
+      audio.loop = TRACKS.length === 1;
+      setTickerText();
+      if (play) audio.play().catch(function() {
+        document.addEventListener('click', function resume() {
+          audio.play(); document.removeEventListener('click', resume);
+        });
+      });
+    }
+
+    audio.addEventListener('ended', function() { loadTrack(trackIdx + 1, 0, true); });
+    window.addEventListener('beforeunload', saveState);
+    setInterval(saveState, 2000);
+
+    buildTicker();
+    setTickerText();
+    tick();
+
+    var saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY)); } catch(e) {}
+
+    if (saved && TRACKS[saved.idx]) {
+      loadTrack(saved.idx, saved.time, !saved.paused);
+    } else {
+      loadTrack(0, 0, false);
+      audio.play().catch(function() {
+        document.addEventListener('click', function resume() {
+          audio.play(); document.removeEventListener('click', resume);
+        });
+      });
+    }
+  })();
+  </script>
 </body>
 </html>
