@@ -9,7 +9,7 @@ if (!root || !canvas) throw new Error('Missing required DOM elements');
 
 // ── Clock (creates its own DOM element) ───────────────────────────────────────
 initClock();
-initAudio();
+initAudio('dark');
 
 // ── Shared state ──────────────────────────────────────────────────────────────
 const state = {

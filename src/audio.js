@@ -1,7 +1,3 @@
-// ── Ambient audio ─────────────────────────────────────────────────────────────
-// Drop your audio files in /assets/audio/
-// Each page calls initAudio() on load — picks a random track and plays it softly.
-
 const TRACKS = [
   { src: './assets/audio/Beneath the Mask.mp3',  title: 'Beneath the Mask', credits: 'Shoji Meguro / Lyn Inaizumi' },
   { src: './assets/audio/Clair De Lune.mp3',     title: 'Clair De Lune',    credits: 'Claude Debussy' },
@@ -12,40 +8,14 @@ const TRACKS = [
   { src: './assets/audio/Great Plateau.mp3',     title: 'Great Plateau',    credits: 'Manaka Kataoka / Hajime Wakai' },
 ];
 
+// theme: 'dark' = blue text (home page), 'light' = dark text (white pages)
 export function initAudio(theme) {
-  // theme: 'dark' (home) or 'light' (other pages)
-  const track = TRACKS[Math.floor(Math.random() * TRACKS.length)];
+  const isDark = theme !== 'light';
+  const track  = TRACKS[Math.floor(Math.random() * TRACKS.length)];
+  const color  = isDark ? 'rgba(100,200,255,0.45)' : 'rgba(0,0,0,0.28)';
+  const barCol = isDark ? 'rgba(100,200,255,0.5)'  : 'rgba(0,0,0,0.25)';
 
-  const audio = new Audio(track.src);
-  audio.loop   = true;
-  audio.volume = 0.18;
-
-  // Create ticker element
-  const ticker = document.createElement('div');
-  ticker.id = 'now-playing';
-  ticker.style.cssText = [
-    'position:fixed', 'bottom:14px', 'left:16px', 'z-index:9000',
-    'display:flex', 'align-items:center', 'gap:8px',
-    'pointer-events:none', 'max-width:320px', 'overflow:hidden',
-  ].join(';');
-
-  // Equalizer icon
-  const icon = document.createElement('div');
-  icon.style.cssText = 'flex-shrink:0;display:flex;align-items:flex-end;gap:1.5px;height:12px;';
-  const barHeights = [4, 10, 6, 8];
-  const delays     = [0, 0.15, 0.3, 0.1];
-  barHeights.forEach(function(h, i) {
-    const b = document.createElement('span');
-    b.style.cssText = [
-      'display:block', 'width:2px', 'height:' + h + 'px',
-      'background:' + (theme === 'dark' ? 'rgba(100,200,255,0.5)' : 'rgba(0,0,0,0.25)'),
-      'animation:npEq 0.8s ease-in-out infinite alternate',
-      'animation-delay:' + delays[i] + 's',
-    ].join(';');
-    icon.appendChild(b);
-  });
-
-  // Inject keyframes once
+  // ── Inject keyframes ──────────────────────────────────────────────────────
   if (!document.getElementById('np-style')) {
     const st = document.createElement('style');
     st.id = 'np-style';
@@ -53,42 +23,72 @@ export function initAudio(theme) {
     document.head.appendChild(st);
   }
 
-  // Scroll wrap + text
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'overflow:hidden;white-space:nowrap;flex:1;';
+  // ── Build ticker DOM ──────────────────────────────────────────────────────
+  const ticker = document.createElement('div');
+  ticker.style.cssText =
+    'position:fixed;bottom:14px;left:16px;z-index:9000;' +
+    'display:flex;align-items:center;gap:8px;' +
+    'pointer-events:none;max-width:340px;overflow:hidden;';
 
-  const label = 'Now Playing: ' + track.title + '  —  ' + track.credits + '\u2003\u2003\u2003\u2003';
-  const txt = document.createElement('span');
-  txt.style.cssText = [
-    'display:inline-block',
-    'font-family:Orbitron,sans-serif',
-    'font-size:9px', 'letter-spacing:2px', 'white-space:nowrap',
-    'color:' + (theme === 'dark' ? 'rgba(100,200,255,0.45)' : 'rgba(0,0,0,0.28)'),
-  ].join(';');
-  txt.textContent = label + label; // duplicate for seamless loop
+  // equalizer bars
+  const icon = document.createElement('div');
+  icon.style.cssText = 'flex-shrink:0;display:flex;align-items:flex-end;gap:1.5px;height:12px;';
+  [4,10,6,8].forEach(function(h, i) {
+    const b = document.createElement('span');
+    b.style.cssText =
+      'display:block;width:2px;height:'+h+'px;background:'+barCol+';' +
+      'animation:npEq 0.8s ease-in-out infinite alternate;' +
+      'animation-delay:'+[0,0.15,0.3,0.1][i]+'s;';
+    icon.appendChild(b);
+  });
+
+  // scroll wrap
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'overflow:hidden;white-space:nowrap;flex:1;min-width:0;';
+
+  const label = 'Now Playing: ' + track.title + '  \u2014  ' + track.credits;
+  // pad with spaces so the seam isn't obvious
+  const gap   = '\u2003\u2003\u2003\u2003\u2003';
+  const txt   = document.createElement('span');
+  txt.style.cssText =
+    'display:inline-block;font-family:Orbitron,sans-serif;' +
+    'font-size:9px;letter-spacing:2px;white-space:nowrap;color:'+color+';';
+  // set content once, measure after layout
+  txt.textContent = label + gap + label + gap;
 
   wrap.appendChild(txt);
   ticker.appendChild(icon);
   ticker.appendChild(wrap);
   document.body.appendChild(ticker);
 
-  // Scroll animation
-  let x = 0, raf = null;
-  function scroll() {
-    x -= 0.38;
+  // ── Scroll — wait one frame so scrollWidth is real ────────────────────────
+  let x = 0;
+  requestAnimationFrame(function() {
+    // scrollWidth should now be accurate
     const half = txt.scrollWidth / 2;
-    if (Math.abs(x) >= half) x = 0;
-    txt.style.transform = 'translateX(' + x + 'px)';
-    raf = requestAnimationFrame(scroll);
-  }
-  scroll();
 
-  // Start on first click (browser autoplay policy)
+    function scroll() {
+      x -= 0.38;
+      if (Math.abs(x) >= half) x = 0;
+      txt.style.transform = 'translateX(' + x + 'px)';
+      requestAnimationFrame(scroll);
+    }
+    scroll();
+  });
+
+  // ── Audio — start on first user interaction ───────────────────────────────
+  const audio  = new Audio(track.src);
+  audio.loop   = true;
+  audio.volume = 0.18;
+
   function start() {
     audio.play().catch(function(){});
-    document.removeEventListener('click', start, true);
+    document.removeEventListener('click',   start, true);
     document.removeEventListener('keydown', start, true);
+    document.removeEventListener('mousemove', start, true);
   }
-  document.addEventListener('click',   start, true);
-  document.addEventListener('keydown', start, true);
+  // mousemove catches the very first cursor movement — no click needed
+  document.addEventListener('click',     start, true);
+  document.addEventListener('keydown',   start, true);
+  document.addEventListener('mousemove', start, true);
 }
