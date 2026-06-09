@@ -1,3 +1,4 @@
+import { initAudio } from './audio.js';
 import { createCanvas } from './canvas.js';
 import { initClock }    from './clock.js';
 
@@ -8,6 +9,7 @@ if (!root || !canvas) throw new Error('Missing required DOM elements');
 
 // ── Clock (creates its own DOM element) ───────────────────────────────────────
 initClock();
+initAudio();
 
 // ── Shared state ──────────────────────────────────────────────────────────────
 const state = {
@@ -40,7 +42,7 @@ function openMenu() {
 
 function closeMenu() {
   if (!state.menuOpen) return;
-  state.menuOpen = false;
+  state.menuOpen       = false;
   state.targetProgress = 0;
   renderer.startAnim();
 }

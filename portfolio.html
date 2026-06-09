@@ -522,7 +522,7 @@
     if (window.parent && window.parent.navigateTo) {
       window.parent.navigateTo(href);
     } else {
-      goTo(href);
+      window.location.href = href;
     }
   }
 
@@ -564,7 +564,7 @@
       if (!href || href === '#') return;
       e.preventDefault();
       var rect = this.getBoundingClientRect();
-      spawnDiamonds(rect.left+rect.width/2, rect.top+rect.height/2, function() { goTo(href); });
+      spawnDiamonds(rect.left+rect.width/2, rect.top+rect.height/2, function() { window.location.href = href; });
     });
   });
 
@@ -654,5 +654,10 @@
     }
   })();
   </script>
+
+<script type="module">
+import { initAudio } from './src/audio.js';
+initAudio('light');
+</script>
 </body>
 </html>
