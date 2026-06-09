@@ -5,33 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #020818; }
 
     #frame { position: fixed; inset: 0; width: 100%; height: 100%; border: none; }
 
-    /* ── Now playing ticker ─────────────────────────────────────────── */
     #now-playing {
-      position: fixed;
-      bottom: 14px; left: 16px;
-      z-index: 9000;
+      position: fixed; bottom: 14px; left: 16px; z-index: 9000;
       display: flex; align-items: center; gap: 8px;
-      pointer-events: none;
-      max-width: 340px;
-      overflow: hidden;
+      pointer-events: none; max-width: 340px; overflow: hidden;
     }
-
-    /* animated equalizer bars */
-    #np-icon {
-      flex-shrink: 0;
-      display: flex; align-items: flex-end; gap: 1.5px;
-      height: 12px;
-    }
+    #np-icon { flex-shrink: 0; display: flex; align-items: flex-end; gap: 1.5px; height: 12px; }
     #np-icon span {
-      display: block; width: 2px;
-      background: rgba(100,200,255,0.5);
+      display: block; width: 2px; background: rgba(100,200,255,0.5);
       animation: eqBar 0.8s ease-in-out infinite alternate;
     }
     #np-icon span:nth-child(1){ height: 4px;  animation-delay: 0s; }
@@ -43,119 +31,112 @@
 
     #np-scroll-wrap { overflow: hidden; white-space: nowrap; flex: 1; }
     #np-text {
-      display: inline-block;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9px; letter-spacing: 2px;
-      color: rgba(100,200,255,0.45);
-      white-space: nowrap;
+      display: inline-block; font-family: 'Orbitron', sans-serif;
+      font-size: 9px; letter-spacing: 2px; color: rgba(100,200,255,0.45); white-space: nowrap;
     }
-
-    /* light theme (portfolio/about pages) */
-    #now-playing.light #np-text  { color: rgba(0,0,0,0.28); }
+    #now-playing.light #np-text      { color: rgba(0,0,0,0.28); }
     #now-playing.light #np-icon span { background: rgba(0,0,0,0.25); }
   </style>
 </head>
 <body>
-
-  <iframe id="frame" src="./index.html" allowfullscreen></iframe>
+  <iframe id="frame" src="./index.html" allowfullscreen allow="autoplay" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
 
   <div id="now-playing">
-    <div id="np-icon">
-      <span></span><span></span><span></span><span></span>
-    </div>
-    <div id="np-scroll-wrap">
-      <span id="np-text">—</span>
-    </div>
+    <div id="np-icon"><span></span><span></span><span></span><span></span></div>
+    <div id="np-scroll-wrap"><span id="np-text">—</span></div>
   </div>
 
   <audio id="audio" preload="auto"></audio>
 
-  <script>
-  var PLAYLIST = [
-    { src: './assets/audio/Beneath the Mask.mp3',  title: 'Beneath the Mask', credits: 'Shoji Meguro / Lyn Inaizumi' },
-    { src: './assets/audio/Clair De Lune.mp3',     title: 'Clair De Lune',    credits: 'Claude Debussy' },
-    { src: './assets/audio/Luv Letter.mp3',        title: 'Luv Letter',       credits: 'DJ OKAWARI' },
-    { src: './assets/audio/Royal Days.mp3',        title: 'Royal Days',       credits: 'Shoji Meguro' },
-    { src: './assets/audio/Burning Vow.mp3',       title: 'Burning Vow',      credits: 'Ringo / 芝麻Mochi' },
-    { src: './assets/audio/Korok Forest.mp3',      title: 'Korok Forest',     credits: 'Manaka Kataoka' },
-    { src: './assets/audio/Great Plateau.mp3',     title: 'Great Plateau',    credits: 'Manaka Kataoka / Hajime Wakai' },
-  ];
+<script>
+var PLAYLIST = [
+  { src: './assets/audio/Beneath the Mask.mp3',  title: 'Beneath the Mask', credits: 'Shoji Meguro / Lyn Inaizumi' },
+  { src: './assets/audio/Clair De Lune.mp3',     title: 'Clair De Lune',    credits: 'Claude Debussy' },
+  { src: './assets/audio/Luv Letter.mp3',        title: 'Luv Letter',       credits: 'DJ OKAWARI' },
+  { src: './assets/audio/Royal Days.mp3',        title: 'Royal Days',       credits: 'Shoji Meguro' },
+  { src: './assets/audio/Burning Vow.mp3',       title: 'Burning Vow',      credits: 'Ringo / 芝麻Mochi' },
+  { src: './assets/audio/Korok Forest.mp3',      title: 'Korok Forest',     credits: 'Manaka Kataoka' },
+  { src: './assets/audio/Great Plateau.mp3',     title: 'Great Plateau',    credits: 'Manaka Kataoka / Hajime Wakai' },
+];
 
-  var audio    = document.getElementById('audio');
-  var npText   = document.getElementById('np-text');
-  var npEl     = document.getElementById('now-playing');
-  var frame    = document.getElementById('frame');
-  var trackIdx = 0;
-  var scrollRaf = null;
-  var scrollX   = 0;
+var audio     = document.getElementById('audio');
+var npText    = document.getElementById('np-text');
+var npEl      = document.getElementById('now-playing');
+var frame     = document.getElementById('frame');
+var trackIdx  = 0;
+var scrollRaf = null;
+var scrollX   = 0;
+var started   = false; // guard: audio only ever started once
 
-  // ── Ticker scroll ──────────────────────────────────────────────────────────
-  function setTickerText(t) {
-    var label = 'Now Playing: ' + t.title + '  —  ' + t.credits + '\u2003\u2003\u2003\u2003';
-    npText.textContent = label + label; // duplicate for seamless loop
-    scrollX = 0;
-    if (scrollRaf) cancelAnimationFrame(scrollRaf);
-    tickScroll();
+// ── Ticker ──────────────────────────────────────────────────────────────────
+function setTickerText(t) {
+  var label = 'Now Playing: ' + t.title + '  —  ' + t.credits + '\u2003\u2003\u2003\u2003';
+  npText.textContent = label + label;
+  scrollX = 0;
+  if (scrollRaf) cancelAnimationFrame(scrollRaf);
+  tickScroll();
+}
+function tickScroll() {
+  scrollX -= 0.38;
+  var halfW = npText.scrollWidth / 2;
+  if (Math.abs(scrollX) >= halfW) scrollX = 0;
+  npText.style.transform = 'translateX(' + scrollX + 'px)';
+  scrollRaf = requestAnimationFrame(tickScroll);
+}
+
+// ── Track loading ────────────────────────────────────────────────────────────
+function loadTrack(idx, autoplay) {
+  if (!PLAYLIST.length) return;
+  trackIdx = ((idx % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length;
+  var t = PLAYLIST[trackIdx];
+  audio.src = t.src;
+  audio.load();
+  setTickerText(t);
+  if (autoplay) {
+    audio.play().catch(function(){});
   }
+}
 
-  function tickScroll() {
-    scrollX -= 0.38;
-    var halfW = npText.scrollWidth / 2;
-    if (Math.abs(scrollX) >= halfW) scrollX = 0;
-    npText.style.transform = 'translateX(' + scrollX + 'px)';
-    scrollRaf = requestAnimationFrame(tickScroll);
+audio.addEventListener('ended', function() {
+  loadTrack(trackIdx + 1, true);
+});
+
+// ── Single-shot start: first user click anywhere starts music once ───────────
+// Uses capture so it catches clicks inside the iframe too
+function handleFirstClick() {
+  if (started) return;
+  started = true;
+  document.removeEventListener('click', handleFirstClick, true);
+  if (audio.paused) {
+    audio.play().catch(function(){});
   }
+}
+document.addEventListener('click', handleFirstClick, true);
 
-  // ── Track loading ──────────────────────────────────────────────────────────
-  function loadTrack(idx, autoplay) {
-    if (!PLAYLIST.length) return;
-    trackIdx = ((idx % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length;
-    var t = PLAYLIST[trackIdx];
-    audio.src = t.src;
-    audio.load();
-    setTickerText(t);
-    if (autoplay) audio.play().catch(function(){});
-  }
+// ── Page theme ───────────────────────────────────────────────────────────────
+function updateTheme(url) {
+  var light = url && (
+    url.indexOf('portfolio') !== -1 ||
+    url.indexOf('about')     !== -1 ||
+    url.indexOf('contact')   !== -1
+  );
+  npEl.classList.toggle('light', light);
+}
 
-  audio.addEventListener('ended', function() { loadTrack(trackIdx + 1, true); });
+// Update theme whenever iframe finishes loading a new page
+// Do NOT restart audio here — only theme update
+frame.addEventListener('load', function() {
+  try { updateTheme(frame.contentWindow.location.href); } catch(e) {}
+});
 
-  // Start playback on first user interaction anywhere in the frame
-  function startOnInteraction() {
-    if (audio.paused) {
-      audio.play().catch(function(){});
-    }
-    document.removeEventListener('click', startOnInteraction, true);
-    frame.removeEventListener('load', tryAutoplay);
-  }
+// ── Cross-frame navigation ────────────────────────────────────────────────────
+window.navigateTo = function(href) {
+  frame.src = href;
+};
 
-  function tryAutoplay() {
-    audio.play().catch(function() {
-      // blocked — wait for user click instead
-      document.addEventListener('click', startOnInteraction, true);
-    });
-  }
-
-  // ── Page theme ─────────────────────────────────────────────────────────────
-  function updateTheme(url) {
-    var light = url && (
-      url.indexOf('portfolio') !== -1 ||
-      url.indexOf('about')     !== -1 ||
-      url.indexOf('contact')   !== -1
-    );
-    npEl.classList.toggle('light', light);
-  }
-
-  frame.addEventListener('load', function() {
-    try { updateTheme(frame.contentWindow.location.href); } catch(e) {}
-    tryAutoplay();
-  });
-
-  // ── Cross-frame navigation ─────────────────────────────────────────────────
-  window.navigateTo = function(href) { frame.src = href; };
-
-  // ── Init ───────────────────────────────────────────────────────────────────
-  loadTrack(0, false);
-  tickScroll(); // ticker scrolls even before audio starts
-  </script>
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadTrack(0, false); // load track data + ticker, no audio yet
+tickScroll();        // ticker scrolls immediately
+</script>
 </body>
 </html>
