@@ -209,6 +209,7 @@
   <aside id="sidebar">
     <button class="year-tab active" data-year="2026">2026</button>
     <button class="year-tab"        data-year="2025">2025</button>
+    <button class="year-tab"        data-year="2024">2024</button>
     <div id="sidebar-nav">
       <a class="sidebar-nav-item" href="./index.html">HOME</a>
       <a class="sidebar-nav-item" href="./about.html">ABOUT</a>
@@ -348,6 +349,31 @@
         </div>
       </section>
 
+
+      <div class="year-divider"></div>
+
+      <!-- ══ 2024 ════════════════════════════════════════════════════════════ -->
+      <section class="year-section" data-year="2024">
+        <div class="year-heading">2024</div>
+        <div class="year-count" data-count-year="2024"></div>
+        <div class="strip-row">
+
+          <div class="strip wide"
+               data-caption="RIVER" data-sub="Painting">
+            <div class="strip-label">RIVER</div>
+            <div class="strip-sublabel">Painting</div>
+            <img src="./assets/images/portfolio/2024/river.jpeg" alt="River">
+          </div>
+
+          <div class="strip wide"
+               data-caption="WHITE ROCK" data-sub="Painting">
+            <div class="strip-label">WHITE ROCK</div>
+            <div class="strip-sublabel">Painting</div>
+            <img src="./assets/images/portfolio/2024/white_rock.jpeg" alt="White Rock">
+          </div>
+
+        </div>
+      </section>
     </div>
   </div>
 
@@ -515,7 +541,6 @@
       }
     });
   });
-  
 
   // ── Diamond nav transition ─────────────────────────────────────────────────
   function spawnDiamonds(ox, oy, cb) {
