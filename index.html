@@ -11,6 +11,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; background: #020818; overflow: hidden; }
     #main-root { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
     #Neole17 {
       position: absolute; top: 0; left: 0;
       width: 100%; height: 100%;
@@ -28,13 +29,60 @@
       color: rgba(100,200,255,0.5); text-align: right;
       pointer-events: none; line-height: 1.6;
     }
+
+    /* ── Navigation hint ───────────────────────────────────────────── */
+    #nav-hint {
+      position: absolute;
+      left: 50%; top: 62%;
+      transform: translateX(-50%);
+      z-index: 30;
+      text-align: center;
+      pointer-events: none;
+      user-select: none;
+    }
+    #nav-hint .hint-line1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 5px;
+      color: rgba(100,200,255,0.2);
+      text-transform: uppercase;
+      animation: hintPulse 4s ease-in-out infinite;
+    }
+    #nav-hint .hint-line2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 7px;
+      letter-spacing: 4px;
+      color: rgba(100,200,255,0.12);
+      text-transform: uppercase;
+      margin-top: 6px;
+      animation: hintPulse 4s ease-in-out infinite 0.5s;
+    }
+    /* thin divider line */
+    #nav-hint .hint-rule {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(100,200,255,0.15), transparent);
+      margin: 8px auto 0;
+      animation: hintPulse 4s ease-in-out infinite 1s;
+    }
+    @keyframes hintPulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1;   }
+    }
   </style>
 </head>
 <body>
   <div id="main-root">
     <canvas id="Neole17"></canvas>
     <div id="triggerZone"></div>
+
+    <div id="nav-hint">
+      <div class="hint-line1">seek the boundary</div>
+      <div class="hint-rule"></div>
+      <div class="hint-line2">move cursor left &nbsp;·&nbsp; press tab</div>
+    </div>
   </div>
+
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

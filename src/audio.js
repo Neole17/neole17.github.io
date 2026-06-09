@@ -26,9 +26,9 @@ export function initAudio(theme) {
   // ── Build ticker DOM ──────────────────────────────────────────────────────
   const ticker = document.createElement('div');
   ticker.style.cssText =
-    'position:fixed;bottom:14px;left:16px;z-index:9000;' +
+    'position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9000;' +
     'display:flex;align-items:center;gap:8px;' +
-    'pointer-events:none;max-width:340px;overflow:hidden;';
+    'pointer-events:none;max-width:400px;overflow:hidden;';
 
   // equalizer bars
   const icon = document.createElement('div');
@@ -65,7 +65,7 @@ export function initAudio(theme) {
   let x = 0;
   requestAnimationFrame(function() {
     // scrollWidth should now be accurate
-    const half = txt.scrollWidth / 2;
+    const half = txt.scrollWidth * 5;
 
     function scroll() {
       x -= 0.38;
