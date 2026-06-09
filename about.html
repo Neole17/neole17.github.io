@@ -79,6 +79,48 @@
 
     #dateDisplay { position: absolute; bottom: 16px; right: 20px; z-index: 30; font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 3px; color: rgba(0,0,0,0.25); text-align: right; pointer-events: none; line-height: 1.6; }
 
+
+    /* ── CV button + popup ────────────────────────────────────────── */
+    .cv-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase; color: #111;
+      border: 1.5px solid #111; padding: 10px 22px;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.15s, color 0.15s;
+      align-self: flex-start; margin-top: auto;
+      cursor: pointer; background: transparent; position: relative;
+    }
+    .cv-btn:hover { background: #111; color: #fff; }
+    .cv-btn::before { content: '↓'; font-size: 14px; }
+
+    #cv-popup {
+      position: absolute;
+      bottom: calc(100% + 12px); left: 0;
+      background: #fff;
+      border: 1.5px solid #111;
+      padding: 14px 18px;
+      min-width: 200px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px; letter-spacing: 1px; color: #333;
+      line-height: 1.5;
+      /* tapered bottom-left corner via clip-path */
+      clip-path: polygon(14px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 14px);
+      opacity: 0; pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+      white-space: nowrap;
+      z-index: 50;
+    }
+    #cv-popup.visible {
+      opacity: 1; pointer-events: auto; transform: translateY(0);
+    }
+    #cv-popup .cv-popup-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px; letter-spacing: 3px; color: #aaa;
+      display: block; margin-bottom: 6px; text-transform: uppercase;
+    }
+
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     #panel-left   { animation: fadeUp .4s ease both .05s; }
     #panel-center { animation: fadeUp .4s ease both .12s; }
@@ -105,7 +147,13 @@
       <p class="bio-text" style="font-size:13px;color:#666;line-height:1.7;">
         Designer · Developer · Creator
       </p>
-      <a class="cv-btn" href="#" download>CV</a>
+      <div style="position:relative;align-self:flex-start;margin-top:auto;">
+        <button class="cv-btn" id="cv-btn-trigger" onclick="toggleCV(event)">CV</button>
+        <div id="cv-popup">
+          <span class="cv-popup-label">Curriculum Vitae</span>
+          (none lol im a minor)
+        </div>
+      </div>
     </div>
 
     <div class="divider"></div>
@@ -267,9 +315,22 @@
   }
   oceanTick();
 
+
+
 })();
 </script>
 
+<script>
+function toggleCV(e) {
+  e.stopPropagation();
+  var popup = document.getElementById('cv-popup');
+  popup.classList.toggle('visible');
+}
+document.addEventListener('click', function() {
+  var popup = document.getElementById('cv-popup');
+  if (popup) popup.classList.remove('visible');
+});
+</script>
 <script type="module">
 import { initAudio } from './src/audio.js';
 initAudio('light');
