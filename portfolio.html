@@ -233,7 +233,7 @@
         <div class="strip-row">
 
           <div class="strip featured"
-               data-caption="WITCH BONES" data-sub="Concept Art">
+               data-caption="WITCH BONES" data-sub="Character Design">
             <div class="strip-label">WITCH BONES</div>
             <div class="strip-sublabel">Concept Art</div>
             <img src="./assets/images/portfolio/2026/T2 final render 1.png" alt="Witch Bones">
@@ -515,16 +515,7 @@
       }
     });
   });
-
-
-  // Navigate via parent shell if available (preserves audio), else direct
-  function goTo(href) {
-    if (window.parent && window.parent.navigateTo) {
-      window.parent.navigateTo(href);
-    } else {
-      window.location.href = href;
-    }
-  }
+  
 
   // ── Diamond nav transition ─────────────────────────────────────────────────
   function spawnDiamonds(ox, oy, cb) {
@@ -570,87 +561,6 @@
 
 })();
 </script>
-<script>
-  // ── Audio (shared across pages via sessionStorage) ─────────────────────────
-  (function() {
-    // ── TRACKS — edit this list ─────────────────────────────────────────────
-
-    var STORAGE_KEY = 'p3_audio';
-    var audio  = new Audio();
-    var trackIdx = 0;
-    var offset   = 0;
-    var inner    = null;
-    var raf      = null;
-
-    function saveState() {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-        idx: trackIdx, time: audio.currentTime, paused: audio.paused
-      }));
-    }
-
-    function buildTicker() {
-      var wrap = document.createElement('div');
-      wrap.id  = 'audio-ticker';
-      inner    = document.createElement('div');
-      inner.id = 'audio-ticker-inner';
-      wrap.appendChild(inner);
-      document.body.appendChild(wrap);
-    }
-
-    function setTickerText() {
-      if (!inner || !TRACKS[trackIdx]) return;
-      var t = TRACKS[trackIdx];
-      var txt = t.title + '   —   ' + t.artist;
-      inner.textContent = txt + '     ·     ' + txt + '     ·     ';
-      offset = 0;
-    }
-
-    function tick() {
-      if (!inner) return;
-      offset -= 0.35;
-      var half = inner.scrollWidth / 2;
-      if (Math.abs(offset) >= half) offset = 0;
-      inner.style.transform = 'translateX(' + offset + 'px)';
-      raf = requestAnimationFrame(tick);
-    }
-
-    function loadTrack(idx, time, play) {
-      trackIdx = ((idx % TRACKS.length) + TRACKS.length) % TRACKS.length;
-      audio.src = TRACKS[trackIdx].src;
-      audio.currentTime = time || 0;
-      audio.loop = TRACKS.length === 1;
-      setTickerText();
-      if (play) audio.play().catch(function() {
-        document.addEventListener('click', function resume() {
-          audio.play(); document.removeEventListener('click', resume);
-        });
-      });
-    }
-
-    audio.addEventListener('ended', function() { loadTrack(trackIdx + 1, 0, true); });
-    window.addEventListener('beforeunload', saveState);
-    setInterval(saveState, 2000);
-
-    buildTicker();
-    setTickerText();
-    tick();
-
-    var saved = null;
-    try { saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY)); } catch(e) {}
-
-    if (saved && TRACKS[saved.idx]) {
-      loadTrack(saved.idx, saved.time, !saved.paused);
-    } else {
-      loadTrack(0, 0, false);
-      audio.play().catch(function() {
-        document.addEventListener('click', function resume() {
-          audio.play(); document.removeEventListener('click', resume);
-        });
-      });
-    }
-  })();
-  </script>
-
 <script type="module">
 import { initAudio } from './src/audio.js';
 initAudio('light');
