@@ -68,7 +68,12 @@
       color: rgba(0,0,0,0.28); padding: 20px 0 0 4px; flex-shrink: 0;
     }
     .year-count { font-size: 9px; letter-spacing: 2px; color: rgba(0,0,0,0.2); padding: 4px 0 0 4px; flex-shrink: 0; }
-    .strip-row { flex: 1; display: flex; flex-direction: row; align-items: center; gap: 28px; padding: 40px 0 60px; }
+    .strip-row {
+  flex: 1;
+  min-height: 0;   /* ← lets the row shrink to the space left in the section */
+  display: flex; flex-direction: row; align-items: center;
+  gap: 28px; padding: 40px 0 60px;
+}
 
     /* ── Strip ───────────────────────────────────────────────────────────── */
     .strip {
@@ -232,6 +237,41 @@
         <div class="year-heading">2026</div>
         <div class="year-count" data-count-year="2026"></div>
         <div class="strip-row">
+
+          <div class="strip wide"
+               data-caption="Game Shot UI" data-sub="Game Design Concept UI Shot">
+            <div class="strip-label">Game Shot</div>
+            <div class="strip-sublabel">Concept Art</div>
+            <img src="./assets/images/portfolio/2026/Game Shot UI.jpg" alt="Game Shot UI">
+          </div>
+
+          <div class="strip"
+               data-caption="fish_pencil" data-sub="Seafood Market - China">
+            <div class="strip-label">fish pencil</div>
+            <div class="strip-sublabel">Pencil Sketch</div>
+            <img src="./assets/images/portfolio/2026/fish_pencil.jpg " alt="fish_pencil">
+          </div>
+
+          <div class="strip"
+               data-caption="Venice" data-sub="Venice Watercolour">
+            <div class="strip-label">Venice</div>
+            <div class="strip-sublabel">Watercolor</div>
+            <img src="./assets/images/portfolio/2026/Venice.jpg" alt="Venice">
+          </div>
+
+          <div class="strip wide"
+               data-caption="dragon.png" data-sub="Unfinished Environmental Concept: Dragon Break-in">
+            <div class="strip-label">dragon</div>
+            <div class="strip-sublabel">Concept Art</div>
+            <img src="./assets/images/portfolio/2026/dragon.png" alt="dragon">
+          </div>
+          
+          <div class="strip featured"
+               data-caption="hydraulics-robot-guard" data-sub="Character Concept: Machine Doll">
+            <div class="strip-label">robot</div>
+            <div class="strip-sublabel">Concept Art</div>
+            <img src="./assets/images/portfolio/2026/hydraulics-robot-guard.jpg" alt="hydraulics robot guard">
+          </div>
 
           <div class="strip featured"
                data-caption="WITCH BONES" data-sub="Character Design">
