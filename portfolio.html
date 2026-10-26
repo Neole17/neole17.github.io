@@ -69,11 +69,11 @@
     }
     .year-count { font-size: 9px; letter-spacing: 2px; color: rgba(0,0,0,0.2); padding: 4px 0 0 4px; flex-shrink: 0; }
     .strip-row {
-  flex: 1;
-  min-height: 0;   /* ← lets the row shrink to the space left in the section */
-  display: flex; flex-direction: row; align-items: center;
-  gap: 28px; padding: 40px 0 60px;
-}
+      flex: 1;
+      min-height: 0;   /* lets the row shrink to the space left in the section */
+      display: flex; flex-direction: row; align-items: center;
+      gap: 28px; padding: 40px 0 60px;
+    }
 
     /* ── Strip ───────────────────────────────────────────────────────────── */
     .strip {
@@ -82,7 +82,14 @@
       transition: box-shadow 0.3s;
     }
     .strip.featured { width: 380px; }
-    .strip.wide     { width: 260px; }
+
+    /* Wide strips: same height as every other strip, width follows the image.
+       The script below sets each one's aspect-ratio from the real image size
+       once it loads; 16 / 9 is just a placeholder until then. */
+    .strip.wide {
+      width: auto;
+      aspect-ratio: 16 / 9;
+    }
 
     /* The strip always shows only its cover image */
     .strip > img {
@@ -227,7 +234,8 @@
     <div id="scroll-track">
 
       <!-- ══ 2026 ════════════════════════════════════════════════════════════
-           Strip types:  (default) 160px  |  .wide 260px  |  .featured 380px
+           Strip types:  (default) 160px  |  .featured 380px
+                         .wide = same height, width matches the image's own shape
            Single image:   <img src="..." alt=""> directly inside .strip
            Multi-image:    data-images="path1|path2|path3" on .strip
                            The first path is the cover shown in the strip.
@@ -238,19 +246,11 @@
         <div class="year-count" data-count-year="2026"></div>
         <div class="strip-row">
 
-          <div class="grid-item" data-caption="Subsurface Environment Concept">
-          <img src="./assets/images/portfolio/2026/subsurface-magma final.png" alt="Subsurface Environment">
-          <div class="grid-caption">Subsurface Environment Concept</div>
-          </div>
-
-          <div class="grid-item" data-caption="Blender 3D environment Concept">
-          <img src="./assets/images/portfolio/2026/mirror door 1.png" alt="mirror door 1">
-          <div class="grid-caption">Blender 3D Environment Concept</div>
-          </div>
-
-          <div class="grid-item" data-caption="Energy Plant Environment Concept">
-          <img src="./assets/images/portfolio/2026/energy plant v2.png" alt="Energy Plant Environment">
-          <div class="grid-caption">Energy Plant Environment Concept</div>
+          <div class="strip wide"
+               data-caption="SUBSURFACE" data-sub="Subsurface Environment Concept">
+            <div class="strip-label">SUBSURFACE</div>
+            <div class="strip-sublabel">Environment Concept</div>
+            <img src="./assets/images/portfolio/2026/subsurface-magma final.png" alt="Subsurface Environment">
           </div>
 
           <div class="strip wide"
@@ -264,7 +264,7 @@
                data-caption="fish_pencil" data-sub="Seafood Market - China">
             <div class="strip-label">fish pencil</div>
             <div class="strip-sublabel">Pencil Sketch</div>
-            <img src="./assets/images/portfolio/2026/fish_pencil.jpg " alt="fish_pencil">
+            <img src="./assets/images/portfolio/2026/fish_pencil.jpg" alt="fish_pencil">
           </div>
 
           <div class="strip"
@@ -280,7 +280,7 @@
             <div class="strip-sublabel">Concept Art</div>
             <img src="./assets/images/portfolio/2026/dragon.png" alt="dragon">
           </div>
-          
+
           <div class="strip featured"
                data-caption="hydraulics-robot-guard" data-sub="Character Concept: Machine Doll">
             <div class="strip-label">robot</div>
@@ -293,6 +293,20 @@
             <div class="strip-label">WITCH BONES</div>
             <div class="strip-sublabel">Concept Art</div>
             <img src="./assets/images/portfolio/2026/T2 final render 1.png" alt="Witch Bones">
+          </div>
+
+          <div class="strip wide"
+               data-caption="MIRROR DOOR" data-sub="Blender 3D Environment Concept">
+            <div class="strip-label">MIRROR DOOR</div>
+            <div class="strip-sublabel">Blender 3D Environment Concept</div>
+            <img src="./assets/images/portfolio/2026/mirror door 1.png" alt="Mirror door">
+          </div>
+
+          <div class="strip wide"
+               data-caption="ENERGY PLANT" data-sub="Energy Plant Environment Concept">
+            <div class="strip-label">ENERGY PLANT</div>
+            <div class="strip-sublabel">Environment Concept</div>
+            <img src="./assets/images/portfolio/2026/energy plant v2.png" alt="Energy Plant Environment">
           </div>
 
           <div class="strip wide"
@@ -323,13 +337,13 @@
             <img src="./assets/images/portfolio/2026/frankenstein.jpg" alt="Frankenstein Storyboard">
           </div>
 
-            <div class="strip featured"
-                 data-caption="ASSEMBLAGE" data-sub="Mixed Media"
-                 data-images="./assets/images/portfolio/2026/assemblage00.jpeg|../assets/images/portfolio/2026/assemblage01.jpeg|./assets/images/portfolio/2026/assemblage02.jpeg">
-              <div class="strip-label">ASSEMBLAGE</div>
-              <div class="strip-sublabel">Mixed Media</div>
-              <img src="./assets/images/portfolio/2026/assemblage00.jpeg" alt="Assemblage">
-            </div>
+          <div class="strip featured"
+               data-caption="ASSEMBLAGE" data-sub="Mixed Media"
+               data-images="./assets/images/portfolio/2026/assemblage00.jpeg|./assets/images/portfolio/2026/assemblage01.jpeg|./assets/images/portfolio/2026/assemblage02.jpeg">
+            <div class="strip-label">ASSEMBLAGE</div>
+            <div class="strip-sublabel">Mixed Media</div>
+            <img src="./assets/images/portfolio/2026/assemblage00.jpeg" alt="Assemblage">
+          </div>
 
           <div class="strip featured"
                data-caption="WATCHMAKER" data-sub="Character Concept">
@@ -388,10 +402,12 @@
             <img src="./assets/images/portfolio/2025/viscom W1 movie comp 3.png" alt="VISCOM movie compositions">
           </div>
 
-          <div class="grid-item" data-caption="VISCOM Black and White Value Study">
-          <img src="./assets/images/portfolio/2025/bw 2.png" alt="VISCOM Black and White Value Study">
-          <div class="grid-caption">VISCOM Black and White Value Study</div>
-          </div> 
+          <div class="strip wide"
+               data-caption="VALUE STUDY" data-sub="VISCOM Black and White Value Study">
+            <div class="strip-label">VALUE STUDY</div>
+            <div class="strip-sublabel">VISCOM Black and White</div>
+            <img src="./assets/images/portfolio/2025/bw 2.png" alt="VISCOM Black and White Value Study">
+          </div>
 
           <div class="strip wide"
                data-caption="AIRPLANE" data-sub="VISCOM Week 8">
@@ -407,34 +423,15 @@
             <img src="./assets/images/portfolio/2025/WF_enchanted_forest.png" alt="Enchanted Forest">
           </div>
 
-          <div class="grid-item" data-caption="Glucose Molecule 3D Render">
-          <img src="./assets/images/portfolio/2025/C6H12O6.png" alt="Glucose Molecule">
-          <div class="grid-caption">Glucose Molecule 3D Render</div>
-          </div> 
-          
-        </div>
-      </section>
-
-      <!-- ── 2024 section ──────────────────────────────────────────── -->
-      <section class="year-section" data-year="2024">
-        <div class="year-label">2024</div>
-        <div class="year-heading">2024</div>
-        <div class="year-count" data-count-year="2024">— 0 works</div>
-        <div class="img-grid" data-grid-year="2024">
-          
-          <div class="grid-item" data-caption="River">
-          <img src="./assets/images/portfolio/2024/river.jpeg" alt="River">
-          <div class="grid-caption">River - Acrylic</div>
-          </div> 
-          
-          <div class="grid-item" data-caption="White Rock">
-          <img src="./assets/images/portfolio/2024/white_rock.jpeg" alt="White Rock">
-          <div class="grid-caption">White Rock - Acrylic</div>
-          </div> 
+          <div class="strip wide"
+               data-caption="GLUCOSE MOLECULE" data-sub="Glucose Molecule 3D Render">
+            <div class="strip-label">GLUCOSE MOLECULE</div>
+            <div class="strip-sublabel">3D Render</div>
+            <img src="./assets/images/portfolio/2025/C6H12O6.png" alt="Glucose Molecule">
+          </div>
 
         </div>
       </section>
-
 
       <div class="year-divider"></div>
 
@@ -445,16 +442,16 @@
         <div class="strip-row">
 
           <div class="strip wide"
-               data-caption="RIVER" data-sub="Painting">
+               data-caption="RIVER" data-sub="Acrylic">
             <div class="strip-label">RIVER</div>
-            <div class="strip-sublabel">Painting</div>
+            <div class="strip-sublabel">Acrylic</div>
             <img src="./assets/images/portfolio/2024/river.jpeg" alt="River">
           </div>
 
           <div class="strip wide"
-               data-caption="WHITE ROCK" data-sub="Painting">
+               data-caption="WHITE ROCK" data-sub="Acrylic">
             <div class="strip-label">WHITE ROCK</div>
-            <div class="strip-sublabel">Painting</div>
+            <div class="strip-sublabel">Acrylic</div>
             <img src="./assets/images/portfolio/2024/white_rock.jpeg" alt="White Rock">
           </div>
 
@@ -508,6 +505,19 @@
     var sec  = document.querySelector('.year-section[data-year="' + year + '"]');
     var n    = sec ? sec.querySelectorAll('.strip').length : 0;
     el.textContent = '— ' + n + ' work' + (n !== 1 ? 's' : '');
+  });
+
+  // ── Wide strips: match each strip's shape to its image ─────────────────────
+  // Height stays the same as every other strip; the width follows from the
+  // image's real proportions, so the whole image shows with no cropping.
+  document.querySelectorAll('.strip.wide > img').forEach(function(img) {
+    function fit() {
+      if (img.naturalWidth && img.naturalHeight) {
+        img.parentElement.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+      }
+    }
+    if (img.complete) fit();
+    else img.addEventListener('load', fit);
   });
 
   // ── Multi-image badge on strips ────────────────────────────────────────────
