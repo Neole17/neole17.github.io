@@ -253,11 +253,11 @@
             <img src="./assets/images/portfolio/2026/subsurface-magma final.png" alt="Subsurface Environment">
           </div>
 
-          <div class="strip wide"
+          <div class="strip featured"
                data-caption="Game Shot UI" data-sub="Game Design Concept UI Shot">
             <div class="strip-label">Game Shot</div>
             <div class="strip-sublabel">Concept Art</div>
-            <img src="./assets/images/portfolio/2026/Game Shot UI.jpg" alt="Game Shot UI">
+            <img src="./assets/images/portfolio/2026/Game Shot UI.png" alt="Game Shot UI">
           </div>
 
           <div class="strip"
@@ -274,7 +274,7 @@
             <img src="./assets/images/portfolio/2026/Venice.jpg" alt="Venice">
           </div>
 
-          <div class="strip wide"
+          <div class="strip featured"
                data-caption="dragon.png" data-sub="Unfinished Environmental Concept: Dragon Break-in">
             <div class="strip-label">dragon</div>
             <div class="strip-sublabel">Concept Art</div>
@@ -295,7 +295,7 @@
             <img src="./assets/images/portfolio/2026/T2 final render 1.png" alt="Witch Bones">
           </div>
 
-          <div class="strip wide"
+          <div class="strip featured"
                data-caption="MIRROR DOOR" data-sub="Blender 3D Environment Concept">
             <div class="strip-label">MIRROR DOOR</div>
             <div class="strip-sublabel">Blender 3D Environment Concept</div>
@@ -316,7 +316,7 @@
             <img src="./assets/images/portfolio/2026/Environmental sketch.png" alt="Environmental Art Concept">
           </div>
 
-          <div class="strip wide"
+          <div class="strip featured"
                data-caption="VISCOM TERM 3" data-sub="Environmental Art Practice">
             <div class="strip-label">VISCOM TERM 3</div>
             <div class="strip-sublabel">Environmental Art Practice</div>
@@ -374,21 +374,21 @@
         <div class="year-count" data-count-year="2025"></div>
         <div class="strip-row">
 
-          <div class="strip"
+          <div class="strip wide"
                data-caption="CROW" data-sub="Illustration">
             <div class="strip-label">CROW</div>
             <div class="strip-sublabel">Illustration</div>
             <img src="./assets/images/portfolio/2025/crow.jpeg" alt="Crow">
           </div>
 
-          <div class="strip"
+          <div class="strip featured"
                data-caption="DOVE — CHARITY" data-sub="Illustration">
             <div class="strip-label">DOVE — CHARITY</div>
             <div class="strip-sublabel">Illustration</div>
             <img src="./assets/images/portfolio/2025/dove_02.jpg" alt="Dove-charity">
           </div>
 
-          <div class="strip wide"
+          <div class="strip featured"
                data-caption="CAMERA SHOTS" data-sub="VISCOM Exercise">
             <div class="strip-label">CAMERA SHOTS</div>
             <div class="strip-sublabel">VISCOM Exercise</div>
@@ -416,18 +416,18 @@
             <img src="./assets/images/portfolio/2025/Week8 airplane.png" alt="VISCOM plane">
           </div>
 
-          <div class="strip featured"
+          <div class="strip wide"
                data-caption="ENCHANTED FOREST" data-sub="Winter Formal Poster · 2025">
             <div class="strip-label">ENCHANTED FOREST</div>
             <div class="strip-sublabel">Winter Formal Poster · 2025</div>
             <img src="./assets/images/portfolio/2025/WF_enchanted_forest.png" alt="Enchanted Forest">
           </div>
 
-          <div class="strip wide"
+          <div class="strip featured"
                data-caption="GLUCOSE MOLECULE" data-sub="Glucose Molecule 3D Render">
             <div class="strip-label">GLUCOSE MOLECULE</div>
             <div class="strip-sublabel">3D Render</div>
-            <img src="./assets/images/portfolio/2025/C6H12O6.png" alt="Glucose Molecule">
+            <img src="./assets/images/portfolio/2025/C6H12O6 - H2O IMF.png" alt="Glucose Molecule">
           </div>
 
         </div>
@@ -487,10 +487,12 @@
 
   // ── Clock ──────────────────────────────────────────────────────────────────
   var HOUR_NAMES = [
-    'Dark Hour','Hollow Hour','Grave Hour','Witching Hour','Bone Hour','False Hour',
-    'Pale Hour','Uneasy Hour','Waking Hour','Glass Hour','Ascendant Hour','Bright Hour',
-    'Zenith Hour','Verdict Hour','Haze Hour','Gold Hour','Shadow Hour','Fraying Hour',
-    'Threshold Hour','Ember Hour','Blue Hour','Velvet Hour','Dissolving Hour','Sleep Hour'
+  'Hour',      'Hour',    'Hour',     'Hour',
+  'Hour',      'Hour',     'Hour',      'Hour',
+  'Hour',    'Hour',     'Hour', 'Hour',
+  'Hour',    'Hour',   'Hour',      'Hour',
+  'Hour',    'Hour',   'Hour',      'Hour',
+  'Hour',      'Hour',    'Hour','Hour',
   ];
   function updateClock() {
     var el = document.getElementById('dateDisplay'), now = new Date();
