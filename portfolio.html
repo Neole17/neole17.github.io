@@ -6,687 +6,460 @@
   <title>Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;800&family=Orbitron:wght@700;900&family=Noto+Sans+SC:wght@500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Rajdhani', sans-serif; color: #1a1a1a; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Albert Sans', sans-serif; color: #111; background: #f4f5f6; }
 
-    #portfolio-root {
-      width: 100vw; height: 100vh; display: flex;
-      overflow: hidden; position: relative;
-      background: linear-gradient(160deg, #faf9f7 0%, #f3f1ed 50%, #edf0f5 100%);
-    }
-    #portfolio-root::before {
-      content: ''; position: fixed; inset: 0; z-index: 1; pointer-events: none;
-      background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
-      background-size: 32px 32px;
+    :root { --blue: #1c4dff; --sky: #2f8cff; --paper: #f4f5f6; --ink: #111; }
+
+    #root { display: flex; width: 100vw; height: 100vh; }
+
+    .dots {
+      background-color: var(--paper);
+      background-image: radial-gradient(circle, rgba(0, 0, 0, 0.22) 1px, transparent 1.2px);
+      background-size: 26px 26px;
     }
 
-    /* ── Sidebar ─────────────────────────────────────────────────────────── */
     #sidebar {
-      position: relative; z-index: 30; flex-shrink: 0;
-      width: 52px; height: 100vh;
-      background: rgba(250,249,247,0.97);
-      border-right: 1px solid rgba(0,0,0,0.08);
-      display: flex; flex-direction: column;
-      align-items: center; padding: 52px 0 16px; gap: 2px;
+      position: relative; z-index: 30; flex-shrink: 0; width: 56px; height: 100%;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 48px 0 16px; background: #f7f8fa; border-right: 2px solid var(--ink);
     }
+    .years { display: flex; flex-direction: column; }
     .year-tab {
-      writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);
-      font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px;
-      color: rgba(0,0,0,0.22); cursor: pointer; padding: 18px 8px;
-      border: none; background: transparent;
-      transition: color 0.2s, background 0.2s;
-      border-left: 2px solid transparent; width: 100%; text-align: center;
-    }
-    .year-tab:hover { color: rgba(0,0,0,0.75); background: rgba(0,0,0,0.03); }
-    .year-tab.active { color: #111; border-left-color: #111; background: rgba(0,0,0,0.05); }
-    #sidebar-nav { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 0; width: 100%; }
-    .sidebar-nav-item {
       writing-mode: vertical-rl; transform: rotate(180deg);
-      font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 2px;
-      color: rgba(0,0,0,0.22); text-decoration: none; padding: 10px 8px; transition: color 0.2s;
+      width: 100%; padding: 20px 0; border: none; border-left: 4px solid transparent; background: transparent; cursor: pointer;
+      font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 900; letter-spacing: 4px; color: #111;
+      transition: background 0.15s, color 0.15s;
     }
-    .sidebar-nav-item:hover { color: rgba(0,0,0,0.7); }
-    .sidebar-nav-item.active { color: rgba(0,0,0,0.38); cursor: default; }
+    .year-tab:hover { background: #e4e8f5; }
+    .year-tab.active { background: var(--blue); color: #fff; border-left-color: #111; }
+    .side-nav { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .side-link {
+      writing-mode: vertical-rl; transform: rotate(180deg);
+      padding: 12px 0; width: 100%; text-align: center; text-decoration: none;
+      font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #111;
+      transition: background 0.15s, color 0.15s;
+    }
+    .side-link:hover { background: #111; color: #fff; }
+    .side-link.active { color: var(--blue); cursor: default; }
+    .side-link.active:hover { background: transparent; }
 
-    /* ── Scroll ──────────────────────────────────────────────────────────── */
-    #scroll-area {
-      position: relative; z-index: 20; flex: 1; height: 100vh;
-      overflow-x: scroll; overflow-y: hidden; scrollbar-width: none;
-    }
-    #scroll-area::-webkit-scrollbar { display: none; }
-    #scroll-track {
-      display: flex; flex-direction: row; align-items: stretch;
-      height: 100vh; width: max-content; padding: 0 80px;
-    }
+    #stage { position: relative; flex: 1; min-width: 0; overflow: hidden; }
+    #fan { position: absolute; left: 0; top: 0; width: 60%; height: 100%; pointer-events: none; }
+    #hud { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    #hud .h { stroke: #111; stroke-width: 1; }
+    #hud .hf { stroke: #111; stroke-width: 1; opacity: 0.25; }
+    #hud .bar { fill: #111; }
+    #hud text { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.08em; fill: #222; }
+    #hud .blink { animation: blink 2.6s steps(2, jump-none) infinite; }
+    @keyframes blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.15; } }
+    .hairline { position: absolute; left: calc((100% - min(500px, 30vw)) * 0.6); top: 0; bottom: 0; width: 1px; background: rgba(0, 0, 0, 0.18); }
 
-    /* ── Year section ────────────────────────────────────────────────────── */
-    .year-section { display: flex; flex-direction: column; height: 100vh; flex-shrink: 0; position: relative; }
-    .year-heading {
-      font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 5px;
-      color: rgba(0,0,0,0.28); padding: 20px 0 0 4px; flex-shrink: 0;
-    }
-    .year-count { font-size: 9px; letter-spacing: 2px; color: rgba(0,0,0,0.2); padding: 4px 0 0 4px; flex-shrink: 0; }
-    .strip-row {
-      flex: 1;
-      min-height: 0;   /* lets the row shrink to the space left in the section */
-      display: flex; flex-direction: row; align-items: center;
-      gap: 28px; padding: 40px 0 60px;
-    }
 
-    /* ── Strip ───────────────────────────────────────────────────────────── */
-    .strip {
-      position: relative; height: 100%; width: 160px; flex-shrink: 0;
-      cursor: pointer; overflow: hidden;
-      transition: box-shadow 0.3s;
-    }
-    .strip.featured { width: 380px; }
+    #track { position: absolute; left: 0; right: 0; top: 52%; height: min(64vh, 600px); transform: translateY(-50%); z-index: 4; touch-action: pan-y; }
+    .card { position: absolute; top: 0; height: 100%; overflow: hidden; cursor: pointer; background: #dfe3ea; }
+    .card img { position: absolute; top: 0; left: 50%; height: 100%; width: auto; max-width: none; transform: translateX(-50%); display: block; pointer-events: none; user-select: none; }
+    .card.current { cursor: zoom-in; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.16); }
+    #bracket { position: absolute; z-index: 6; width: 90px; height: 200px; border-left: 6px solid var(--blue); border-top: 6px solid var(--blue); pointer-events: none; }
 
-    /* Wide strips: same height as every other strip, width follows the image.
-       The script below sets each one's aspect-ratio from the real image size
-       once it loads; 16 / 9 is just a placeholder until then. */
-    .strip.wide {
-      width: auto;
-      aspect-ratio: 16 / 9;
-    }
 
-    /* The strip always shows only its cover image */
-    .strip > img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      transition: transform 0.4s ease;
+    #next {
+      position: absolute; left: calc((100% - min(500px, 30vw)) * 0.6); bottom: 36px; transform: translateX(40px);
+      display: flex; align-items: center; gap: 12px; border: none; background: none; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #222;
     }
-    .strip:hover > img { transform: scale(1.03); }
-    .strip:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.12); z-index: 5; }
+    #next i { display: block; width: 34px; height: 1px; background: #111; position: relative; transition: width 0.2s; }
+    #next i::after { content: ''; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid #111; border-right: 1px solid #111; transform: rotate(45deg); }
+    #next:hover i { width: 52px; }
+    #index { position: absolute; left: calc((100% - min(500px, 30vw)) * 0.6); bottom: 36px; transform: translateX(calc(-100% - 24px)); white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #222; }
+    #index b { color: var(--blue); }
+    #index span { margin-left: 14px; color: #555; }
 
-    /* Hover label */
-    .strip-label {
-      position: absolute; top: -36px; left: 0;
-      font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 3px;
-      color: rgba(0,0,0,0.5); white-space: nowrap;
-      opacity: 0; transform: translateY(4px);
-      transition: opacity 0.2s, transform 0.2s; pointer-events: none;
+    #panel {
+      position: absolute; right: 0; top: 0; bottom: 0; width: min(500px, 30vw); z-index: 1; pointer-events: none;
+      background: linear-gradient(180deg, #6fd2ff 0%, #3b8dff 35%, #1c4dff 70%, #0b2bc4 100%);
     }
-    .strip-sublabel {
-      position: absolute; top: -20px; left: 0;
-      font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: 2px;
-      color: rgba(0,0,0,0.3); white-space: nowrap;
-      opacity: 0; transform: translateY(4px);
-      transition: opacity 0.2s 0.04s, transform 0.2s 0.04s; pointer-events: none;
-    }
-    .strip:hover .strip-label,
-    .strip:hover .strip-sublabel { opacity: 1; transform: translateY(0); }
+    .hanzi { position: absolute; right: 0; top: 0; bottom: 0; width: min(500px, 30vw); z-index: 2; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 6px 10px; pointer-events: none; }
+    .hanzi span { display: block; white-space: nowrap; font-family: 'Noto Sans SC', sans-serif; font-weight: 500; line-height: 1; letter-spacing: -0.02em; color: rgba(255, 255, 255, 0.22); }
 
-    /* multi-image indicator dot on cover */
-    .multi-badge {
-      position: absolute; top: 10px; right: 10px;
-      font-family: 'Orbitron', sans-serif; font-size: 8px; letter-spacing: 1px;
-      color: rgba(255,255,255,0.8); background: rgba(0,0,0,0.45);
-      padding: 3px 7px; pointer-events: none; z-index: 4;
-    }
 
-    /* Year divider */
-    .year-divider {
-      width: 1px; height: 60vh; align-self: center; flex-shrink: 0; margin: 0 60px;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.12) 30%, rgba(0,0,0,0.12) 70%, transparent);
-    }
+    #lightbox { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(244, 245, 246, 0.97); cursor: zoom-out; }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 88vw; max-height: 86vh; object-fit: contain; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18); }
+    #lightbox::before { content: ''; position: absolute; left: 32px; top: 32px; width: 90px; height: 90px; border-left: 6px solid var(--blue); border-top: 6px solid var(--blue); }
+    .lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 54px; height: 54px; border: 2px solid #111; background: #fff; font-size: 30px; line-height: 1; cursor: pointer; }
+    .lb-arrow:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+    #lb-prev { left: 28px; }
+    #lb-next { right: 28px; }
+    #lightbox p { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #333; }
 
-    /* ── Lightbox ────────────────────────────────────────────────────────── */
-    #lightbox {
-      position: fixed; inset: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    @media (max-width: 900px) {
+      html, body { overflow: auto; }
+      #root { flex-direction: column; height: auto; min-height: 100vh; }
+      #sidebar { width: 100%; height: auto; flex-direction: row; align-items: center; padding: 14px 16px; border-right: none; border-bottom: 3px solid var(--ink); gap: 14px; }
+      .years, .side-nav { flex-direction: row; width: auto; }
+      .year-tab, .side-link { writing-mode: horizontal-tb; transform: none; width: auto; padding: 10px 12px; border-left: none; border-bottom: 4px solid transparent; }
+      .year-tab.active { border-bottom-color: #111; }
+      #stage { height: 86vh; }
+      #fan { width: 100%; }
+      #track { height: 46vh; }
+      #next, #index { left: 50%; }
+      .hairline { left: 50%; }
+      #panel, .hanzi { width: 40vw; }
     }
-    #lightbox.open { opacity: 1; pointer-events: auto; }
-
-    #lightbox-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.92); cursor: pointer; }
-
-    #lightbox-img-wrap {
-      position: relative; z-index: 2;
-      max-width: 88vw; max-height: 88vh;
-      display: flex; align-items: center; justify-content: center;
-    }
-    #lightbox-img {
-      max-width: 88vw; max-height: 88vh; object-fit: contain; display: block;
-      box-shadow: 0 0 100px rgba(0,0,0,0.6);
-      transform: scale(0.94); transition: transform 0.35s cubic-bezier(.2,1,.4,1), opacity 0.12s;
-    }
-    #lightbox.open #lightbox-img { transform: scale(1); }
-
-    #lightbox-title {
-      position: absolute; top: -32px; left: 0;
-      font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 4px; color: rgba(255,255,255,0.6);
-    }
-    #lightbox-sub {
-      position: absolute; top: -16px; left: 0;
-      font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.35);
-    }
-    #lightbox-counter {
-      position: absolute; top: -32px; right: 0;
-      font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.3);
-    }
-    #lightbox-close {
-      position: absolute; bottom: -32px; right: 0;
-      font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 3px;
-      color: rgba(255,255,255,0.35); cursor: pointer; background: none; border: none; transition: color 0.2s;
-    }
-    #lightbox-close:hover { color: #fff; }
-
-    /* Lightbox prev/next — only shown when multiple images */
-    .lb-arrow {
-      position: fixed; top: 50%; transform: translateY(-50%);
-      background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.6);
-      border: 1px solid rgba(255,255,255,0.12);
-      font-size: 22px; cursor: pointer; padding: 16px 14px;
-      z-index: 3; transition: background 0.2s, color 0.2s;
-      display: none; /* hidden by default, shown when multi */
-    }
-    .lb-arrow:hover { background: rgba(255,255,255,0.15); color: #fff; }
-    #lb-prev { left: 20px; }
-    #lb-next { right: 20px; }
-
-    /* ── Corner brackets ─────────────────────────────────────────────────── */
-    .corner { position: fixed; z-index: 25; pointer-events: none; }
-    .corner.tl { top: 8px; left: 60px; }
-    .corner.tr { top: 8px; right: 8px; }
-    .corner.bl { bottom: 8px; left: 60px; }
-    .corner.br { bottom: 8px; right: 8px; }
-
-    /* ── Clock ───────────────────────────────────────────────────────────── */
-    #dateDisplay {
-      position: fixed; top: 12px; right: 18px; z-index: 30;
-      font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 3px;
-      color: rgba(0,0,0,0.25); text-align: right; pointer-events: none; line-height: 1.6;
-    }
-
-    /* ── Audio ticker ─────────────────────────────────────────────── */
-    #audio-ticker {
-      position: fixed; bottom: 12px; left: 60px;
-      z-index: 50; overflow: hidden;
-      width: 240px; height: 18px;
-      pointer-events: none;
-    }
-    #audio-ticker-inner {
-      position: absolute; white-space: nowrap;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9px; letter-spacing: 2px;
-      color: rgba(150,150,160,0.45);
-      will-change: transform;
+    @media (prefers-reduced-motion: reduce) {
+      #hud .blink { animation: none; }
     }
   </style>
 </head>
 <body>
-<div id="portfolio-root">
+<div id="root">
 
   <aside id="sidebar">
-    <button class="year-tab active" data-year="2026">2026</button>
-    <button class="year-tab"        data-year="2025">2025</button>
-    <button class="year-tab"        data-year="2024">2024</button>
-    <div id="sidebar-nav">
-      <a class="sidebar-nav-item" href="./index.html">HOME</a>
-      <a class="sidebar-nav-item" href="./about.html">ABOUT</a>
-      <a class="sidebar-nav-item active" href="#">PORTFOLIO</a>
-      <a class="sidebar-nav-item" href="./contact.html">CONTACT</a>
-    </div>
+    <nav class="years" id="years" aria-label="Years"></nav>
+    <nav class="side-nav" aria-label="Pages">
+      <a class="side-link" href="./index.html">HOME</a>
+      <a class="side-link" href="./about.html">ABOUT</a>
+      <a class="side-link active" aria-current="page">PORTFOLIO</a>
+      <a class="side-link" href="./contact.html">CONTACT</a>
+    </nav>
   </aside>
 
-  <div id="scroll-area">
-    <div id="scroll-track">
+  <main id="stage" class="dots">
+    <div id="panel" aria-hidden="true"></div>
+    <canvas id="fan" aria-hidden="true"></canvas>
 
-      <!-- ══ 2026 ════════════════════════════════════════════════════════════
-           Strip types:  (default) 160px  |  .featured 380px
-                         .wide = same height, width matches the image's own shape
-           Single image:   <img src="..." alt=""> directly inside .strip
-           Multi-image:    data-images="path1|path2|path3" on .strip
-                           The first path is the cover shown in the strip.
-                           All images open in lightbox with prev/next arrows.
-      ══════════════════════════════════════════════════════════════════════ -->
-      <section class="year-section" data-year="2026">
-        <div class="year-heading">2026</div>
-        <div class="year-count" data-count-year="2026"></div>
-        <div class="strip-row">
 
-          <div class="strip wide"
-               data-caption="SUBSURFACE" data-sub="Subsurface Environment Concept">
-            <div class="strip-label">SUBSURFACE</div>
-            <div class="strip-sublabel">Environment Concept</div>
-            <img src="./assets/images/portfolio/2026/subsurface-magma final.png" alt="Subsurface Environment">
-          </div>
+    <svg id="hud" aria-hidden="true"></svg>
+    <div class="hairline" aria-hidden="true"></div>
 
-          <div class="strip featured"
-               data-caption="Game Shot UI" data-sub="Game Design Concept UI Shot">
-            <div class="strip-label">Game Shot</div>
-            <div class="strip-sublabel">Concept Art</div>
-            <img src="./assets/images/portfolio/2026/Game Shot UI.png" alt="Game Shot UI">
-          </div>
+    <div id="track" role="list" aria-label="Works"></div>
+    <div id="bracket" aria-hidden="true"></div>
 
-          <div class="strip"
-               data-caption="fish_pencil" data-sub="Seafood Market - China">
-            <div class="strip-label">fish pencil</div>
-            <div class="strip-sublabel">Pencil Sketch</div>
-            <img src="./assets/images/portfolio/2026/fish_pencil.jpg" alt="fish_pencil">
-          </div>
-
-          <div class="strip"
-               data-caption="Venice" data-sub="Venice Watercolour">
-            <div class="strip-label">Venice</div>
-            <div class="strip-sublabel">Watercolor</div>
-            <img src="./assets/images/portfolio/2026/Venice.jpg" alt="Venice">
-          </div>
-
-          <div class="strip featured"
-               data-caption="dragon.png" data-sub="Unfinished Environmental Concept: Dragon Break-in">
-            <div class="strip-label">dragon</div>
-            <div class="strip-sublabel">Concept Art</div>
-            <img src="./assets/images/portfolio/2026/dragon.png" alt="dragon">
-          </div>
-
-          <div class="strip featured"
-               data-caption="hydraulics-robot-guard" data-sub="Character Concept: Machine Doll">
-            <div class="strip-label">robot</div>
-            <div class="strip-sublabel">Concept Art</div>
-            <img src="./assets/images/portfolio/2026/hydraulics-robot-guard.jpg" alt="hydraulics robot guard">
-          </div>
-
-          <div class="strip featured"
-               data-caption="WITCH BONES" data-sub="Character Design">
-            <div class="strip-label">WITCH BONES</div>
-            <div class="strip-sublabel">Concept Art</div>
-            <img src="./assets/images/portfolio/2026/T2 final render 1.png" alt="Witch Bones">
-          </div>
-
-          <div class="strip featured"
-               data-caption="MIRROR DOOR" data-sub="Blender 3D Environment Concept">
-            <div class="strip-label">MIRROR DOOR</div>
-            <div class="strip-sublabel">Blender 3D Environment Concept</div>
-            <img src="./assets/images/portfolio/2026/mirror door 1.png" alt="Mirror door">
-          </div>
-
-          <div class="strip wide"
-               data-caption="ENERGY PLANT" data-sub="Energy Plant Environment Concept">
-            <div class="strip-label">ENERGY PLANT</div>
-            <div class="strip-sublabel">Environment Concept</div>
-            <img src="./assets/images/portfolio/2026/energy plant v2.png" alt="Energy Plant Environment">
-          </div>
-
-          <div class="strip wide"
-               data-caption="ENVIRONMENTAL SKETCH" data-sub="Concept Art">
-            <div class="strip-label">ENVIRONMENTAL SKETCH</div>
-            <div class="strip-sublabel">Concept Art</div>
-            <img src="./assets/images/portfolio/2026/Environmental sketch.png" alt="Environmental Art Concept">
-          </div>
-
-          <div class="strip featured"
-               data-caption="VISCOM TERM 3" data-sub="Environmental Art Practice">
-            <div class="strip-label">VISCOM TERM 3</div>
-            <div class="strip-sublabel">Environmental Art Practice</div>
-            <img src="./assets/images/portfolio/2026/VISCOM Term3 Week 1.png" alt="Environmental Art Practice">
-          </div>
-
-          <div class="strip"
-               data-caption="HARD MACHINERY" data-sub="Industrial Sketches">
-            <div class="strip-label">HARD MACHINERY</div>
-            <div class="strip-sublabel">Industrial Sketches</div>
-            <img src="./assets/images/portfolio/2026/hard machinery sketch.png" alt="Hard Machinery Sketches">
-          </div>
-
-          <div class="strip wide"
-               data-caption="FRANKENSTEIN" data-sub="Concept Storyboard — Mary Shelley">
-            <div class="strip-label">FRANKENSTEIN</div>
-            <div class="strip-sublabel">Concept Storyboard — Mary Shelley</div>
-            <img src="./assets/images/portfolio/2026/frankenstein.jpg" alt="Frankenstein Storyboard">
-          </div>
-
-          <div class="strip featured"
-               data-caption="ASSEMBLAGE" data-sub="Mixed Media"
-               data-images="./assets/images/portfolio/2026/assemblage00.jpeg|./assets/images/portfolio/2026/assemblage01.jpeg|./assets/images/portfolio/2026/assemblage02.jpeg">
-            <div class="strip-label">ASSEMBLAGE</div>
-            <div class="strip-sublabel">Mixed Media</div>
-            <img src="./assets/images/portfolio/2026/assemblage00.jpeg" alt="Assemblage">
-          </div>
-
-          <div class="strip featured"
-               data-caption="WATCHMAKER" data-sub="Character Concept">
-            <div class="strip-label">WATCHMAKER</div>
-            <div class="strip-sublabel">Character Concept</div>
-            <img src="./assets/images/portfolio/2026/Watchmaker part 2.png" alt="Character Concept - Watchmaker">
-          </div>
-
-          <!--
-            MULTI-IMAGE EXAMPLE:
-            <div class="strip featured"
-                 data-caption="MY SERIES" data-sub="Illustration Series"
-                 data-images="./assets/images/1.jpg|./assets/images/2.jpg|./assets/images/3.jpg">
-              <div class="strip-label">MY SERIES</div>
-              <div class="strip-sublabel">Illustration Series</div>
-              <img src="./assets/images/1.jpg" alt="My Series">
-            </div>
-          -->
-
-        </div>
-      </section>
-
-      <div class="year-divider"></div>
-
-      <!-- ══ 2025 ════════════════════════════════════════════════════════════ -->
-      <section class="year-section" data-year="2025">
-        <div class="year-heading">2025</div>
-        <div class="year-count" data-count-year="2025"></div>
-        <div class="strip-row">
-
-          <div class="strip wide"
-               data-caption="CROW" data-sub="Illustration">
-            <div class="strip-label">CROW</div>
-            <div class="strip-sublabel">Illustration</div>
-            <img src="./assets/images/portfolio/2025/crow.jpeg" alt="Crow">
-          </div>
-
-          <div class="strip featured"
-               data-caption="DOVE — CHARITY" data-sub="Illustration">
-            <div class="strip-label">DOVE — CHARITY</div>
-            <div class="strip-sublabel">Illustration</div>
-            <img src="./assets/images/portfolio/2025/dove_02.jpg" alt="Dove-charity">
-          </div>
-
-          <div class="strip featured"
-               data-caption="CAMERA SHOTS" data-sub="VISCOM Exercise">
-            <div class="strip-label">CAMERA SHOTS</div>
-            <div class="strip-sublabel">VISCOM Exercise</div>
-            <img src="./assets/images/portfolio/2025/VISCOM Week3 In-Class (2).png" alt="VISCOM Camera Shots Exercise">
-          </div>
-
-          <div class="strip wide"
-               data-caption="MOVIE COMPOSITIONS" data-sub="VISCOM Exercise">
-            <div class="strip-label">MOVIE COMPOSITIONS</div>
-            <div class="strip-sublabel">VISCOM Exercise</div>
-            <img src="./assets/images/portfolio/2025/viscom W1 movie comp 3.png" alt="VISCOM movie compositions">
-          </div>
-
-          <div class="strip wide"
-               data-caption="VALUE STUDY" data-sub="VISCOM Black and White Value Study">
-            <div class="strip-label">VALUE STUDY</div>
-            <div class="strip-sublabel">VISCOM Black and White</div>
-            <img src="./assets/images/portfolio/2025/bw 2.png" alt="VISCOM Black and White Value Study">
-          </div>
-
-          <div class="strip wide"
-               data-caption="AIRPLANE" data-sub="VISCOM Week 8">
-            <div class="strip-label">AIRPLANE</div>
-            <div class="strip-sublabel">VISCOM Week 8</div>
-            <img src="./assets/images/portfolio/2025/Week8 airplane.png" alt="VISCOM plane">
-          </div>
-
-          <div class="strip wide"
-               data-caption="ENCHANTED FOREST" data-sub="Winter Formal Poster · 2025">
-            <div class="strip-label">ENCHANTED FOREST</div>
-            <div class="strip-sublabel">Winter Formal Poster · 2025</div>
-            <img src="./assets/images/portfolio/2025/WF_enchanted_forest.png" alt="Enchanted Forest">
-          </div>
-
-          <div class="strip featured"
-               data-caption="GLUCOSE MOLECULE" data-sub="Glucose Molecule 3D Render">
-            <div class="strip-label">GLUCOSE MOLECULE</div>
-            <div class="strip-sublabel">3D Render</div>
-            <img src="./assets/images/portfolio/2025/C6H12O6 - H2O IMF.png" alt="Glucose Molecule">
-          </div>
-
-        </div>
-      </section>
-
-      <div class="year-divider"></div>
-
-      <!-- ══ 2024 ════════════════════════════════════════════════════════════ -->
-      <section class="year-section" data-year="2024">
-        <div class="year-heading">2024</div>
-        <div class="year-count" data-count-year="2024"></div>
-        <div class="strip-row">
-
-          <div class="strip wide"
-               data-caption="RIVER" data-sub="Acrylic">
-            <div class="strip-label">RIVER</div>
-            <div class="strip-sublabel">Acrylic</div>
-            <img src="./assets/images/portfolio/2024/river.jpeg" alt="River">
-          </div>
-
-          <div class="strip wide"
-               data-caption="WHITE ROCK" data-sub="Acrylic">
-            <div class="strip-label">WHITE ROCK</div>
-            <div class="strip-sublabel">Acrylic</div>
-            <img src="./assets/images/portfolio/2024/white_rock.jpeg" alt="White Rock">
-          </div>
-
-        </div>
-      </section>
+    <div class="hanzi" id="hanzi" aria-hidden="true">
+      <span>桃李不言</span><span>桃李不言</span><span>桃李不言</span>
+      <span>桃李不言</span><span>桃李不言</span><span>桃李不言</span>
     </div>
-  </div>
 
-  <!-- Lightbox -->
-  <div id="lightbox">
-    <div id="lightbox-backdrop"></div>
-    <button class="lb-arrow" id="lb-prev">&#8592;</button>
-    <button class="lb-arrow" id="lb-next">&#8594;</button>
-    <div id="lightbox-img-wrap">
-      <div id="lightbox-title"></div>
-      <div id="lightbox-sub"></div>
-      <div id="lightbox-counter"></div>
-      <button id="lightbox-close">&#10005; CLOSE</button>
-      <img id="lightbox-img" src="" alt="">
-    </div>
-  </div>
+    <div id="index"></div>
+    <button id="next" aria-label="Next work">NEXT <i></i></button>
+  </main>
 
-  <div class="corner tl"><svg width="24" height="24" fill="none"><polyline points="0,24 0,0 24,0" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
-  <div class="corner tr"><svg width="24" height="24" fill="none"><polyline points="0,0 24,0 24,24" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
-  <div class="corner bl"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/><polyline points="0,0 0,24" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
-  <div class="corner br"><svg width="24" height="24" fill="none"><polyline points="0,24 24,24 24,0" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/></svg></div>
-
-  <div id="dateDisplay"></div>
 </div>
 
-<script>
-(function() {
+<div id="lightbox" role="dialog" aria-label="Full size image"><button class="lb-arrow" id="lb-prev" aria-label="Previous image">‹</button><img id="lb-img" alt=""><button class="lb-arrow" id="lb-next" aria-label="Next image">›</button><p id="lb-cap"></p></div>
 
-  // ── Clock ──────────────────────────────────────────────────────────────────
-  var HOUR_NAMES = [
-  'Hour',      'Hour',    'Hour',     'Hour',
-  'Hour',      'Hour',     'Hour',      'Hour',
-  'Hour',    'Hour',     'Hour', 'Hour',
-  'Hour',    'Hour',   'Hour',      'Hour',
-  'Hour',    'Hour',   'Hour',      'Hour',
-  'Hour',      'Hour',    'Hour','Hour',
-  ];
-  function updateClock() {
-    var el = document.getElementById('dateDisplay'), now = new Date();
-    el.innerHTML = HOUR_NAMES[now.getHours()] + '<br>' +
-      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+<script type="module">
+  const P = './assets/images/portfolio/';
+  const WORKS = {
+    2026: [
+      ['Subsurface', 'Environment Concept', ['2026/subsurface-magma final.png']],
+      ['Game Shot UI', 'Game Design Concept, UI Shot', ['2026/Game Shot UI.png']],
+      ['Fish Pencil', 'Seafood Market, China', ['2026/fish_pencil.jpg']],
+      ['Venice', 'Watercolour', ['2026/Venice.jpg']],
+      ['Dragon Break-in', 'Unfinished Environmental Concept', ['2026/dragon.png']],
+      ['Machine Doll', 'Character Concept', ['2026/hydraulics-robot-guard.jpg']],
+      ['Witch Bones', 'Character Design', ['2026/T2 final render 1.png']],
+      ['Mirror Door', 'Blender 3D Environment Concept', ['2026/mirror door 1.png']],
+      ['Energy Plant', 'Environment Concept', ['2026/energy plant v2.png']],
+      ['Environmental Sketch', 'Concept Art', ['2026/Environmental sketch.png']],
+      ['VISCOM Term 3', 'Environmental Art Practice', ['2026/VISCOM Term3 Week 1.png']],
+      ['Hard Machinery', 'Industrial Sketches', ['2026/hard machinery sketch.png']],
+      ['Frankenstein', 'Concept Storyboard, Mary Shelley', ['2026/frankenstein.jpg']],
+      ['Assemblage', 'Mixed Media', ['2026/assemblage00.jpeg', '2026/assemblage01.jpeg', '2026/assemblage02.jpeg']],
+      ['Watchmaker', 'Character Concept', ['2026/Watchmaker part 2.png']],
+    ],
+    2025: [
+      ['Crow', 'Illustration', ['2025/crow.jpeg']],
+      ['Dove, Charity', 'Illustration', ['2025/dove_02.jpg']],
+      ['Camera Shots', 'VISCOM Exercise', ['2025/VISCOM Week3 In-Class (2).png']],
+      ['Movie Compositions', 'VISCOM Exercise', ['2025/viscom W1 movie comp 3.png']],
+      ['Value Study', 'VISCOM Black and White Value Study', ['2025/bw 2.png']],
+      ['Airplane', 'VISCOM Week 8', ['2025/Week8 airplane.png']],
+      ['Enchanted Forest', 'Winter Formal Poster', ['2025/WF_enchanted_forest.png']],
+      ['Glucose Molecule', '3D Render', ['2025/C6H12O6 - H2O IMF.png']],
+    ],
+    2024: [
+      ['River', 'Acrylic', ['2024/river.jpeg']],
+      ['White Rock', 'Acrylic', ['2024/white_rock.jpeg']],
+    ],
+  };
+
+  const data = {};
+  for (const [year, list] of Object.entries(WORKS)) {
+    data[year] = list.map(([title, sub, files]) => {
+      const images = files.map((f) => P + f);
+      return { title, sub, year, images, src: images[0], aspect: 0.75 };
+    });
   }
-  updateClock(); setInterval(updateClock, 30000);
+  const years = Object.keys(data).sort((a, b) => b - a);
+  const $ = (id) => document.getElementById(id);
+  let year = years[0], idx = 0;
 
-  // ── Work counts ────────────────────────────────────────────────────────────
-  document.querySelectorAll('[data-count-year]').forEach(function(el) {
-    var year = el.getAttribute('data-count-year');
-    var sec  = document.querySelector('.year-section[data-year="' + year + '"]');
-    var n    = sec ? sec.querySelectorAll('.strip').length : 0;
-    el.textContent = '— ' + n + ' work' + (n !== 1 ? 's' : '');
-  });
-
-  // ── Wide strips: match each strip's shape to its image ─────────────────────
-  // Height stays the same as every other strip; the width follows from the
-  // image's real proportions, so the whole image shows with no cropping.
-  document.querySelectorAll('.strip.wide > img').forEach(function(img) {
-    function fit() {
-      if (img.naturalWidth && img.naturalHeight) {
-        img.parentElement.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
-      }
+  function renderYears() {
+    $('years').innerHTML = '';
+    for (const y of years) {
+      const btn = document.createElement('button');
+      btn.className = 'year-tab' + (y === year ? ' active' : '');
+      btn.textContent = y;
+      btn.onclick = () => { if (y !== year) { year = y; idx = 0; renderYears(); buildTrack(); show(); } };
+      $('years').append(btn);
     }
-    if (img.complete) fit();
-    else img.addEventListener('load', fit);
-  });
+  }
 
-  // ── Multi-image badge on strips ────────────────────────────────────────────
-  document.querySelectorAll('.strip[data-images]').forEach(function(strip) {
-    var imgs = strip.getAttribute('data-images').split('|').filter(Boolean);
-    if (imgs.length < 2) return;
-    var badge = document.createElement('div');
-    badge.className = 'multi-badge';
-    badge.textContent = '1 — ' + imgs.length;
-    strip.appendChild(badge);
-  });
+  const NARROW = 160, GAP = 14, AIR = 100;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pos = 0, target = 0, cards = [], snapTimer = 0;
 
-  // ── Vertical scroll → horizontal ──────────────────────────────────────────
-  var scrollArea = document.getElementById('scroll-area');
-  scrollArea.addEventListener('wheel', function(e) {
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      e.preventDefault();
-      scrollArea.scrollLeft += e.deltaY;
+  function buildTrack() {
+    const track = $('track');
+    track.innerHTML = '';
+    cards = data[year].map((w, i) => {
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.setAttribute('role', 'listitem');
+      c.title = w.title;
+      c.innerHTML = `<img alt="" draggable="false" decoding="async">`;
+      const img = c.firstChild;
+      img.alt = w.title;
+      img.onload = () => { if (img.naturalHeight) { w.aspect = img.naturalWidth / img.naturalHeight; layout(); } };
+      img.src = w.src;
+      c.onclick = () => {
+        if (i === idx && Math.abs(pos - i) < 0.05) openLightbox();
+        else goTo(i);
+      };
+      track.append(c);
+      return c;
+    });
+    pos = target = 0;
+    layout();
+  }
+
+  function layout() {
+    const track = $('track'), H = track.clientHeight, W = $('stage').clientWidth;
+    const anchorX = (W - $('panel').clientWidth) * 0.6;
+    const list = data[year];
+    const weight = list.map((w, i) => {
+      const d = Math.min(1, Math.abs(i - pos));
+      return 1 - d * d * (3 - 2 * d);
+    });
+    const widths = list.map((w, i) => NARROW + Math.max(0, H * w.aspect - NARROW) * weight[i]);
+    const centres = [];
+    let x = 0;
+    widths.forEach((wd, i) => {
+      x += AIR * weight[i];
+      centres.push(x + wd / 2);
+      x += wd + AIR * weight[i] + GAP;
+    });
+    const lo = Math.floor(pos), hi = Math.min(list.length - 1, lo + 1), f = pos - lo;
+    const anchor = centres[lo] + (centres[hi] - centres[lo]) * f;
+    const shift = anchorX - anchor;
+    cards.forEach((c, i) => {
+      c.style.width = widths[i] + 'px';
+      c.style.left = (centres[i] - widths[i] / 2 + shift) + 'px';
+      c.classList.toggle('current', i === idx);
+    });
+    const cur = cards[idx];
+    if (cur) {
+      const br = $('bracket'), tr = track.getBoundingClientRect(), st = $('stage').getBoundingClientRect();
+      br.style.left = (parseFloat(cur.style.left) - 20) + 'px';
+      br.style.top = (tr.top - st.top - 20) + 'px';
     }
+  }
+
+  function setIdx(i) {
+    if (i === idx) return;
+    idx = i;
+    show();
+  }
+
+  function show() {
+    const list = data[year], w = list[idx];
+    $('index').innerHTML = `<b>${String(idx + 1).padStart(2, '0')}</b> / ${String(list.length).padStart(2, '0')}<span>${w.title} · ${w.sub}</span>`;
+  }
+
+  function goTo(i) {
+    const n = data[year].length;
+    target = Math.max(0, Math.min(n - 1, i));
+    setIdx(Math.round(target));
+    if (still) { pos = target; layout(); }
+  }
+
+  function tick() {
+    const d = target - pos;
+    pos = Math.abs(d) < 0.001 ? target : pos + d * 0.14;
+    setIdx(Math.round(pos));
+    layout();
+    requestAnimationFrame(tick);
+  }
+
+  $('stage').addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const n = data[year].length;
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    target = Math.max(0, Math.min(n - 1, target + delta * 0.004));
+    setIdx(Math.round(target));
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => { target = Math.round(target); }, 160);
+    if (still) { pos = Math.round(target); layout(); }
   }, { passive: false });
 
-  // ── Year tab navigation ────────────────────────────────────────────────────
-  var tabs = document.querySelectorAll('.year-tab');
-  tabs.forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      var sec = document.querySelector('.year-section[data-year="' + this.getAttribute('data-year') + '"]');
-      if (sec) scrollArea.scrollTo({ left: sec.offsetLeft - 80, behavior: 'smooth' });
-      tabs.forEach(function(t) { t.classList.remove('active'); });
-      this.classList.add('active');
-    });
+  let drag = null;
+  $('track').addEventListener('pointerdown', (e) => { drag = { x: e.clientX, t: target, moved: false }; });
+  addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 6) drag.moved = true;
+    const n = data[year].length;
+    target = Math.max(0, Math.min(n - 1, drag.t - dx / 140));
+    setIdx(Math.round(target));
   });
-  scrollArea.addEventListener('scroll', function() {
-    var midX = scrollArea.scrollLeft + scrollArea.offsetWidth / 2;
-    document.querySelectorAll('.year-section').forEach(function(sec) {
-      if (midX >= sec.offsetLeft && midX < sec.offsetLeft + sec.offsetWidth) {
-        var y = sec.getAttribute('data-year');
-        tabs.forEach(function(t) { t.classList.toggle('active', t.getAttribute('data-year') === y); });
-      }
-    });
+  addEventListener('pointerup', () => {
+    if (!drag) return;
+    const moved = drag.moved;
+    drag = null;
+    target = Math.round(target);
+    if (moved) { const c = (e) => { e.stopPropagation(); removeEventListener('click', c, true); }; addEventListener('click', c, true); setTimeout(() => removeEventListener('click', c, true), 0); }
+  });
+  new ResizeObserver(() => layout()).observe($('stage'));
+
+  let lbIndex = 0;
+  function lbShow() {
+    const w = data[year][idx], n = w.images.length;
+    $('lb-img').src = w.images[lbIndex];
+    $('lb-cap').textContent = `${w.title} · ${w.sub} · ${w.year}` + (n > 1 ? ` · ${lbIndex + 1} / ${n}` : '');
+    $('lb-prev').hidden = $('lb-next').hidden = n < 2;
+  }
+  function openLightbox() {
+    lbIndex = 0;
+    lbShow();
+    $('lightbox').classList.add('open');
+  }
+  const lbStep = (d) => { const n = data[year][idx].images.length; lbIndex = (lbIndex + d + n) % n; lbShow(); };
+  $('lb-prev').onclick = (e) => { e.stopPropagation(); lbStep(-1); };
+  $('lb-next').onclick = (e) => { e.stopPropagation(); lbStep(1); };
+
+  const step = (d) => { const n = data[year].length; goTo((Math.round(target) + d + n) % n); };
+  $('next').onclick = () => step(1);
+  $('lightbox').onclick = () => $('lightbox').classList.remove('open');
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') $('lightbox').classList.remove('open');
+    const lb = $('lightbox').classList.contains('open');
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') lb ? lbStep(1) : step(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') lb ? lbStep(-1) : step(-1);
   });
 
-  // ── Lightbox ───────────────────────────────────────────────────────────────
-  var lightbox   = document.getElementById('lightbox');
-  var lbImg      = document.getElementById('lightbox-img');
-  var lbTitle    = document.getElementById('lightbox-title');
-  var lbSub      = document.getElementById('lightbox-sub');
-  var lbCounter  = document.getElementById('lightbox-counter');
-  var lbBackdrop = document.getElementById('lightbox-backdrop');
-  var lbClose    = document.getElementById('lightbox-close');
-  var lbPrev     = document.getElementById('lb-prev');
-  var lbNext     = document.getElementById('lb-next');
+  function fitHanzi() {
+    const panel = $('hanzi'), rows = panel.children;
+    const h = panel.clientHeight - 12, w = panel.clientWidth - 14;
+    const size = Math.min(h / 6, w / 4.1);
+    for (const r of rows) r.style.fontSize = size + 'px';
+  }
+  new ResizeObserver(fitHanzi).observe($('hanzi'));
+  fitHanzi();
 
-  var lbImages  = [];   // current image list
-  var lbIdx     = 0;    // current index
-
-  function updateLbImage() {
-    lbImg.style.opacity = '0';
-    setTimeout(function() {
-      lbImg.src = lbImages[lbIdx];
-      lbImg.style.opacity = '1';
-    }, 100);
-    if (lbImages.length > 1) {
-      lbCounter.textContent = (lbIdx + 1) + ' / ' + lbImages.length;
-      lbPrev.style.display = 'block';
-      lbNext.style.display = 'block';
-    } else {
-      lbCounter.textContent = '';
-      lbPrev.style.display = 'none';
-      lbNext.style.display = 'none';
+  function buildHud() {
+    const NS = 'http://www.w3.org/2000/svg', hud = $('hud');
+    const W = hud.clientWidth, H = hud.clientHeight;
+    hud.innerHTML = '';
+    const add = (tag, a) => { const n = document.createElementNS(NS, tag); for (const k in a) n.setAttribute(k, a[k]); hud.append(n); return n; };
+    let s = 31;
+    const r = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+    for (const y of [0.08, 0.11, 0.2, 0.66, 0.84, 0.93]) {
+      const x = r() * W * 0.6, len = 120 + r() * W * 0.4;
+      add('line', { class: 'h', x1: x, y1: H * y, x2: x + len, y2: H * y });
+      add('line', { class: 'h', x1: x + len * 0.2, y1: H * y - 4, x2: x + len * 0.2, y2: H * y + 4 });
     }
-  }
-
-  function openLightbox(images, caption, sub, startIdx) {
-    lbImages = images;
-    lbIdx    = startIdx || 0;
-    lbTitle.textContent = caption || '';
-    lbSub.textContent   = sub || '';
-    updateLbImage();
-    lightbox.classList.add('open');
-  }
-
-  function closeLightbox() {
-    lightbox.classList.remove('open');
-    setTimeout(function() { lbImg.src = ''; lbImages = []; }, 320);
-  }
-
-  function lbGo(dir) {
-    lbIdx = (lbIdx + dir + lbImages.length) % lbImages.length;
-    updateLbImage();
-  }
-
-  lbBackdrop.addEventListener('click', closeLightbox);
-  lbClose.addEventListener('click', closeLightbox);
-  lbPrev.addEventListener('click', function() { lbGo(-1); });
-  lbNext.addEventListener('click', function() { lbGo(1); });
-  document.addEventListener('keydown', function(e) {
-    if (!lightbox.classList.contains('open')) return;
-    if (e.key === 'Escape')      closeLightbox();
-    if (e.key === 'ArrowLeft')   lbGo(-1);
-    if (e.key === 'ArrowRight')  lbGo(1);
-  });
-
-  // Wire strips
-  document.querySelectorAll('.strip').forEach(function(strip) {
-    strip.addEventListener('click', function() {
-      var caption = this.getAttribute('data-caption') || '';
-      var sub     = this.getAttribute('data-sub') || '';
-      var multi   = this.getAttribute('data-images');
-
-      if (multi) {
-        // multi-image: parse pipe-separated list
-        var imgs = multi.split('|').filter(Boolean);
-        openLightbox(imgs, caption, sub, 0);
-      } else {
-        var img = this.querySelector('img');
-        if (img) openLightbox([img.src], caption, sub, 0);
-      }
-    });
-  });
-
-  // ── Diamond nav transition ─────────────────────────────────────────────────
-  function spawnDiamonds(ox, oy, cb) {
-    var wrap = document.createElement('div');
-    wrap.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;';
-    document.body.appendChild(wrap);
-    var done = 0, COUNT = 28;
-    for (var i = 0; i < COUNT; i++) {
-      (function() {
-        var d    = document.createElement('div');
-        var size = 12 + Math.random()*44, angle = Math.random()*360;
-        var dist = 80 + Math.random()*Math.max(window.innerWidth,window.innerHeight)*0.9;
-        var tx   = Math.cos(angle*Math.PI/180)*dist, ty = Math.sin(angle*Math.PI/180)*dist;
-        var rot  = Math.random()*360, delay = Math.random()*120, dur = 300+Math.random()*200;
-        var cols = ['#111','#333','#555','#222','#444'];
-        d.style.cssText = [
-          'position:absolute','left:'+(ox-size/2)+'px','top:'+(oy-size/2)+'px',
-          'width:'+size+'px','height:'+size+'px',
-          'background:'+cols[Math.floor(Math.random()*cols.length)],
-          'clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
-          'opacity:1','transform:translate(0,0) rotate('+rot+'deg) scale(1)',
-          'transition:transform '+dur+'ms cubic-bezier(.2,.8,.4,1) '+delay+'ms,'+
-            'opacity '+(dur*0.6)+'ms ease '+(delay+dur*0.4)+'ms'
-        ].join(';');
-        wrap.appendChild(d);
-        requestAnimationFrame(function(){ requestAnimationFrame(function(){
-          d.style.transform='translate('+tx+'px,'+ty+'px) rotate('+(rot+180)+'deg) scale(0.1)';
-          d.style.opacity='0';
-        });});
-        setTimeout(function(){ done++; if(done===COUNT){wrap.remove();if(cb)cb();} }, dur+delay+50);
-      })();
+    for (let i = 0; i < 9; i++) {
+      const y = r() * H, x = r() * W;
+      add('line', { class: 'hf', x1: x, y1: y, x2: Math.min(W, x + 80 + r() * 360), y2: y });
+      add('line', { class: 'hf', x1: x, y1: y, x2: x, y2: y + 20 + r() * 80 });
     }
+    add('rect', { class: 'bar', x: 0, y: H * 0.55, width: W * 0.26, height: 22 });
+    add('rect', { class: 'bar', x: W * 0.3, y: H * 0.55 + 6, width: 60, height: 8 });
+    add('rect', { class: 'bar', x: 18, y: H * 0.47, width: 140, height: 5 });
+    add('rect', { class: 'bar', x: 18, y: H * 0.47 + 10, width: 70, height: 3 });
+    add('rect', { class: 'bar blink', x: W * 0.36, y: H * 0.08 - 8, width: 34, height: 4 });
+    add('rect', { class: 'bar', x: 6, y: H * 0.12, width: 3, height: H * 0.18 });
+    add('rect', { class: 'bar', x: 6, y: H * 0.7, width: 3, height: H * 0.22 });
+    const notes = [
+      [W * 0.62, H * 0.06, 'NEOLE / PORTFOLIO INDEX'],
+      [W * 0.62, H * 0.06 + 12, 'SELECTED WORK, 2024–2026'],
+      [W * 0.62, H * 0.06 + 24, 'ILLUSTRATION · CONCEPT · 3D'],
+      [W * 0.04, H * 0.53, 'SEQ_A / 01'],
+      [W * 0.82, H * 0.9, 'COORD 49.28N 123.12W'],
+      [W * 0.04, H * 0.97, '— ‖ ‖ —— ▸'],
+    ];
+    for (const [x, y, t] of notes) { const n = add('text', { x, y }); n.textContent = t; }
+    for (let i = 0; i < 14; i++) add('rect', { class: 'bar', x: W * 0.02 + i * 6, y: H * 0.9, width: 3, height: 3 });
   }
-  document.querySelectorAll('.sidebar-nav-item').forEach(function(link) {
-    link.addEventListener('click', function(e) {
-      var href = this.getAttribute('href');
-      if (!href || href === '#') return;
-      e.preventDefault();
-      var rect = this.getBoundingClientRect();
-      spawnDiamonds(rect.left+rect.width/2, rect.top+rect.height/2, function() { window.location.href = href; });
-    });
-  });
+  new ResizeObserver(buildHud).observe($('stage'));
 
-})();
-</script>
-<script type="module">
-import { initAudio } from './src/audio.js';
-initAudio('light');
+  (function fan() {
+    const cv = $('fan'), ctx = cv.getContext('2d');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let w = 0, h = 0, dpr = 1;
+    let s = 77;
+    const r = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+    const rays = Array.from({ length: 15 }, () => ({ a: r() * Math.PI * 2, len: 0.25 + r() * 1.1, w: r() < 0.12 ? 2.2 : 0.7, o: 0.15 + r() * 0.6 }));
+    const resize = () => {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      w = cv.clientWidth; h = cv.clientHeight;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      if (still) draw(0);
+    };
+    function glowStroke(alpha, width) {
+      ctx.lineWidth = width * 5; ctx.strokeStyle = `rgba(30,122,214,${alpha * 0.07})`; ctx.stroke();
+      ctx.lineWidth = width; ctx.strokeStyle = `rgba(30,122,214,${alpha * 0.6})`; ctx.stroke();
+    }
+    function draw(t) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      const hub = { x: w * 0.26, y: h * 0.46 };
+      const near = { x: -w * 0.15, y: h * 1.05 };
+      const R = Math.hypot(w, h);
+      ctx.lineCap = 'round';
+      for (const ray of rays) {
+        const a = ray.a + Math.sin(t * 0.05) * 0.03;
+        ctx.beginPath();
+        ctx.moveTo(hub.x + Math.cos(a) * 14, hub.y + Math.sin(a) * 14);
+        ctx.lineTo(hub.x + Math.cos(a) * R * ray.len * 0.6, hub.y + Math.sin(a) * R * ray.len * 0.6);
+        glowStroke(ray.o * 0.55, ray.w);
+      }
+      const N = 11, flow = (t * 0.08) % 1;
+      for (let i = 0; i < N; i++) {
+        const k = (i + flow) / N;
+        const e = Math.pow(k, 2.2);
+        const cx = hub.x + (near.x - hub.x) * e, cy = hub.y + (near.y - hub.y) * e;
+        const rad = 6 + e * R * 0.62;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rad, rad * 0.94, -0.5, 0, Math.PI * 2);
+        const fade = Math.min(1, k * 4) * (1 - k * 0.35);
+        glowStroke(0.5 * fade, i % 4 === 0 ? 2.2 : 1);
+      }
+      for (const [rx, ry, rot, a0, a1, wd] of [[0.9, 0.62, -0.6, 2.2, 4.4, 4], [1.25, 0.8, -0.4, 2.5, 4.0, 2], [0.62, 0.5, -0.7, 1.9, 4.6, 3]]) {
+        ctx.beginPath();
+        ctx.ellipse(hub.x - w * 0.18, hub.y + h * 0.12, w * rx, h * ry, rot + Math.sin(t * 0.07) * 0.03, a0, a1);
+        glowStroke(0.6, wd);
+      }
+      for (const rr of [10, 18, 26]) {
+        ctx.beginPath(); ctx.arc(hub.x, hub.y, rr, 0, Math.PI * 2); glowStroke(0.8, rr === 10 ? 3 : 1.2);
+      }
+      ctx.beginPath(); ctx.arc(hub.x, hub.y, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(30,122,214,0.8)'; ctx.fill();
+    }
+    const loop = (now) => { draw(now / 1000); requestAnimationFrame(loop); };
+    new ResizeObserver(resize).observe(cv);
+    resize();
+    if (!still) requestAnimationFrame(loop);
+  })();
+
+
+  renderYears();
+  buildTrack();
+  show();
+  requestAnimationFrame(tick);
 </script>
 </body>
 </html>

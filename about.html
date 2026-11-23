@@ -112,7 +112,7 @@
 
     .pane {
       position: absolute; z-index: 5; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: min(640px, calc(100% - 64px)); max-height: calc(100% - 64px); overflow: auto;
+      width: min(640px, calc(100% - 64px)); max-height: calc(100% - 64px); display: flex; flex-direction: column;
       background: var(--pane); border: 1px solid var(--line);
       box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.14);
     }
@@ -125,7 +125,8 @@
     }
     .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7f9bff; }
     .pane-title { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; color: #fff; }
-    .bio-text { padding: 22px 26px 26px; font-size: 17px; font-weight: 500; line-height: 1.75; color: var(--text); }
+    .bio-text { overflow-y: auto; scrollbar-width: none; min-height: 0; padding: 22px 26px 26px; font-size: 17px; font-weight: 500; line-height: 1.75; color: var(--text); }
+    .bio-text::-webkit-scrollbar { display: none; }
     .bio-text p { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
     .bio-text p:first-child { font-size: 20px; color: #fff; }
     .bio-text p:last-child { margin: 0; padding: 0; border: none; color: #fff; }
@@ -300,10 +301,6 @@ document.addEventListener('click', function() {
   var popup = document.getElementById('cv-popup');
   if (popup) popup.classList.remove('visible');
 });
-</script>
-<script type="module">
-import { initAudio } from './src/audio.js';
-initAudio('light');
 </script>
 </body>
 </html>

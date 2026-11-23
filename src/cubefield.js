@@ -47,7 +47,6 @@ export function initCubeField(host, canvas, opts = {}) {
   });
 
   let w = 0, h = 0, dpr = 1;
-  let tx = 0, ty = 0, mx = 0, my = 0;
   let travel = 0, last = performance.now();
 
   function resize() {
@@ -64,7 +63,7 @@ export function initCubeField(host, canvas, opts = {}) {
     ctx.fillRect(0, 0, w, h);
     const f = Math.max(w, h) * 0.62;
     const cx = w / 2, cy = h / 2;
-    const yaw = mx * 0.16, pitch = my * 0.12, roll = t * 0.012;
+    const yaw = 0, pitch = 0, roll = t * 0.012;
     const cam = (p) => rot(p, pitch, yaw, roll);
     const proj = (p) => [cx + (f * p[0]) / p[2], cy + (f * p[1]) / p[2]];
 
@@ -134,8 +133,6 @@ export function initCubeField(host, canvas, opts = {}) {
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
     travel += dt * 0.7;
-    mx += (tx - mx) * 0.06;
-    my += (ty - my) * 0.06;
     draw(now / 1000);
     requestAnimationFrame(loop);
   }
@@ -143,12 +140,6 @@ export function initCubeField(host, canvas, opts = {}) {
   new ResizeObserver(resize).observe(host);
   resize();
   if (!still) {
-    addEventListener('pointermove', (e) => {
-      const r = host.getBoundingClientRect();
-      tx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1));
-      ty = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height) * 2 - 1));
-    }, { passive: true });
-    document.documentElement.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
     requestAnimationFrame(loop);
   }
 }
