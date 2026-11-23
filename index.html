@@ -3,86 +3,211 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portfolio</title>
+  <title>Neole</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; background: #020818; overflow: hidden; }
-    #main-root { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Rajdhani', sans-serif; color: #1c1f24; }
 
-    #Neole17 {
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: block; z-index: 10;
-    }
-    #triggerZone {
-      position: absolute; left: 0; top: 0;
-      width: 30px; height: 100%;
-      z-index: 20; cursor: pointer;
-    }
-    #dateDisplay {
-      position: absolute; top: 16px; right: 16px;
-      z-index: 30; font-family: 'Orbitron', sans-serif;
-      font-size: 11px; letter-spacing: 3px;
-      color: rgba(100,200,255,0.5); text-align: right;
-      pointer-events: none; line-height: 1.6;
+    :root { --accent: #1c4dff; --accent-light: #7f9bff; --ink: #1c1f24; --slate: #24303a; --pale: #dfe2e6; }
+
+    #main-root { width: 100vw; height: 100vh; position: relative; overflow: hidden; background: #a5aab0; }
+
+    #tunnel { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0.18; }
+    #grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cpath d='M80 0V160M0 80H160' stroke='%23000000' stroke-opacity='0.11' stroke-width='1'/%3E%3Cpath d='M74 80H86M80 74V86' stroke='%2324303a' stroke-opacity='0.55' stroke-width='1.2'/%3E%3C/svg%3E") -80px -80px / 160px 160px;
     }
 
-    /* ── Navigation hint ───────────────────────────────────────────── */
-    #nav-hint {
-      position: absolute;
-      left: 50%; top: 62%;
-      transform: translateX(-50%);
-      z-index: 30;
-      text-align: center;
-      pointer-events: none;
-      user-select: none;
+    #hud { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .deco { opacity: 0.45; }
+    .b, .t, .k, .band, .dots { fill: none; stroke: var(--accent); }
+    .b { stroke-width: 4; stroke-linecap: square; }
+    .t { stroke-width: 1.5; }
+    .k { stroke-width: 4; }
+    .faint { opacity: 0.6; }
+    .band { stroke-width: 22; stroke-opacity: 0.18; }
+    .dots { stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+    .dot { fill: var(--accent); }
+    .clock { opacity: 0.9; }
+    .mt, .ht { stroke: var(--pale); }
+    .mt { stroke-width: 1; opacity: 0.6; }
+    .ht { stroke-width: 3; }
+    .hand { stroke: var(--pale); stroke-linecap: square; }
+    .hh { stroke-width: 6; }
+    .mh { stroke-width: 3; }
+    .sh { stroke: var(--accent); stroke-width: 1.5; }
+    .hub { fill: var(--pale); stroke: var(--accent); stroke-width: 2; }
+    .spin { transform-box: view-box; transform-origin: 0 0; animation: spin 90s linear infinite; }
+    .s1 { animation-duration: 40s; }
+    .s2 { animation-duration: 70s; animation-direction: reverse; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #files {
+      position: absolute; z-index: 20; left: clamp(20px, 4vw, 64px); top: 50%;
+      transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 26px;
     }
-    #nav-hint .hint-line1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9px;
-      letter-spacing: 5px;
-      color: rgba(100, 201, 255, 0.4);
-      text-transform: uppercase;
-      animation: hintPulse 4s ease-in-out infinite;
+    .files-head {
+      display: inline-flex; align-items: center; gap: 10px; align-self: flex-start;
+      padding: 6px 12px; background: var(--slate); color: #fff;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em;
     }
-    #nav-hint .hint-line2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 7px;
-      letter-spacing: 4px;
-      color: rgba(100, 201, 255, 0.4);
-      text-transform: uppercase;
-      margin-top: 6px;
-      animation: hintPulse 4s ease-in-out infinite 0.5s;
+    .files-head b { background: var(--accent); color: #fff; padding: 1px 5px; font-weight: 600; }
+    .file {
+      position: relative; display: grid; grid-template-columns: 54px 1fr auto; align-items: center; gap: 16px;
+      width: min(400px, 78vw); height: 82px; padding: 0 22px 0 16px;
+      background: rgba(246, 246, 243, 0.9); border: 1px solid #111;
+      box-shadow: 8px 8px 0 rgba(0,0,0,0.12);
+      color: var(--ink); text-decoration: none;
+      transition: transform 0.18s ease-out, box-shadow 0.18s, background 0.18s;
     }
-    /* thin divider line */
-    #nav-hint .hint-rule {
-      width: 40px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(100, 201, 255, 0.4), transparent);
-      margin: 8px auto 0;
-      animation: hintPulse 4s ease-in-out infinite 1s;
+    .file::before {
+      content: attr(data-tab); position: absolute; left: -1px; top: -20px; height: 20px;
+      padding: 0 22px 0 12px; display: flex; align-items: center;
+      background: #111; color: var(--accent-light);
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
     }
-    @keyframes hintPulse {
-      0%, 100% { opacity: 0.6; }
-      50%       { opacity: 1;   }
+    .file::after {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent);
+      transition: width 0.18s ease-out;
     }
+    .file:hover, .file:focus-visible {
+      transform: translateX(14px); background: #fff; box-shadow: 12px 12px 0 rgba(0,0,0,0.16); outline: none;
+    }
+    .file:hover::after, .file:focus-visible::after { width: 10px; }
+
+    .icon { width: 44px; height: 44px; margin-left: 6px; display: block; }
+    .icon .frame { fill: #fff; stroke: #111; stroke-width: 2; }
+    .icon .line { fill: none; stroke: #111; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .icon .fill { fill: var(--accent); stroke: #111; stroke-width: 2; stroke-linejoin: round; }
+    .icon .ink { fill: #111; }
+
+    .name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .name strong { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.14em; }
+    .name span { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5b616b; letter-spacing: 0.04em; }
+    .arrow { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: #111; transition: transform 0.18s; }
+    .file:hover .arrow { transform: translateX(4px); }
+
+    @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
   </style>
 </head>
 <body>
   <div id="main-root">
-    <canvas id="Neole17"></canvas>
-    <div id="triggerZone"></div>
+    <canvas id="tunnel" aria-hidden="true"></canvas>
+    <svg id="hud" aria-hidden="true"></svg>
+    <div id="grid"></div>
 
-    <div id="nav-hint">
-      <div class="hint-line1">seek the boundary</div>
-      <div class="hint-rule"></div>
-      <div class="hint-line2">move cursor left &nbsp;·&nbsp; press tab</div>
-    </div>
+    <nav id="files" aria-label="Pages">
+      <div class="files-head"><b>03</b> FILES // NEOLE</div>
+
+      <a class="file" href="./portfolio.html" data-tab="01">
+        <svg class="icon" viewBox="0 0 44 44" aria-hidden="true">
+          <rect class="frame" x="2" y="6" width="40" height="32" />
+          <circle class="fill" cx="31" cy="15" r="4" />
+          <path class="line" d="M2 34 L14 20 L22 28 L28 22 L42 34" />
+        </svg>
+        <span class="name"><strong>PORTFOLIO</strong><span>portfolio.html · work, 2024–2026</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="file" href="./about.html" data-tab="02">
+        <svg class="icon" viewBox="0 0 44 44" aria-hidden="true">
+          <rect class="frame" x="2" y="2" width="40" height="40" />
+          <circle class="fill" cx="22" cy="16" r="7" />
+          <path class="line" d="M9 38 C9 29 15 25 22 25 C29 25 35 29 35 38" />
+        </svg>
+        <span class="name"><strong>ABOUT</strong><span>about.html · who, what, why</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="file" href="./contact.html" data-tab="03">
+        <svg class="icon" viewBox="0 0 44 44" aria-hidden="true">
+          <rect class="frame" x="11" y="2" width="22" height="40" rx="3" />
+          <rect class="fill" x="15" y="8" width="14" height="24" />
+          <circle class="ink" cx="22" cy="37" r="1.8" />
+        </svg>
+        <span class="name"><strong>CONTACT</strong><span>contact.html · get in touch</span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </nav>
   </div>
 
-  <script type="module" src="./src/main.js"></script>
+  <script type="module">
+    import { initAudio } from './src/audio.js';
+    import { initCubeField } from './src/cubefield.js';
+
+    initAudio('light');
+    initCubeField(document.getElementById('main-root'), document.getElementById('tunnel'));
+
+    const NS = 'http://www.w3.org/2000/svg';
+    const hud = document.getElementById('hud');
+    const el = (tag, attrs, parent) => {
+      const n = document.createElementNS(NS, tag);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      parent.append(n);
+      return n;
+    };
+    const arc = (r, a0, a1) => {
+      const p = (a) => [Math.cos(a * Math.PI / 180) * r, Math.sin(a * Math.PI / 180) * r];
+      const [x0, y0] = p(a0), [x1, y1] = p(a1);
+      return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+    };
+    const polar = (deg, r) => ({ x: Math.sin(deg * Math.PI / 180) * r, y: -Math.cos(deg * Math.PI / 180) * r });
+
+    const frame = el('g', { class: 'deco' }, hud);
+    el('path', { class: 'b', d: 'M18 140 V18 H260' }, frame);
+    el('line', { class: 'b', x1: 28, y1: 28, x2: 28, y2: 120 }, frame);
+    const br = el('svg', { x: '100%', y: '100%', overflow: 'visible' }, frame);
+    el('path', { class: 'b', d: 'M-18 -140 V-18 H-260' }, br);
+    el('line', { class: 'b', x1: -28, y1: -28, x2: -28, y2: -120 }, br);
+    el('line', { class: 't', x1: '50%', y1: 0, x2: '50%', y2: '100%' }, frame);
+
+    const centre = el('svg', { x: '50%', y: '50%', overflow: 'visible' }, hud);
+    const orr = el('g', { class: 'deco' }, centre);
+    el('circle', { class: 't', r: 22 }, orr);
+    let g = el('g', { class: 'spin s1' }, orr);
+    el('circle', { class: 't', r: 70 }, g);
+    el('circle', { class: 'dot', cx: 70, cy: 0, r: 4 }, g);
+    el('circle', { class: 't', cx: 70, cy: 0, r: 11 }, g);
+    g = el('g', { class: 'spin s2' }, orr);
+    el('circle', { class: 'dots', r: 130 }, g);
+    el('circle', { class: 't', cx: -92, cy: 92, r: 16 }, g);
+    el('circle', { class: 'dot', cx: -92, cy: 92, r: 5 }, g);
+    g = el('g', { class: 'spin' }, orr);
+    el('circle', { class: 'band', r: 196 }, g);
+    for (const [a, b] of [[-150, -105], [10, 40], [100, 160]]) el('path', { class: 'k', d: arc(196, a, b) }, g);
+    el('circle', { class: 't', cx: 0, cy: 196, r: 20 }, g);
+    el('circle', { class: 'dot', cx: 0, cy: 196, r: 6 }, g);
+    el('path', { class: 't faint', d: arc(340, -40, 120) }, orr);
+    el('path', { class: 't faint', d: arc(340, 160, 230) }, orr);
+
+    const clock = el('g', { class: 'clock' }, centre);
+    for (let i = 0; i < 60; i++) {
+      const a = polar(i * 6, 254), b = polar(i * 6, i % 5 ? 262 : 272);
+      el('line', { class: i % 5 ? 'mt' : 'ht', x1: a.x, y1: a.y, x2: b.x, y2: b.y }, clock);
+    }
+    const hh = el('line', { class: 'hand hh', x1: 0, y1: 0 }, clock);
+    const mh = el('line', { class: 'hand mh', x1: 0, y1: 0 }, clock);
+    const sh = el('line', { class: 'hand sh' }, clock);
+    const sd = el('circle', { class: 'dot', r: 4 }, clock);
+    el('circle', { class: 'hub', r: 6 }, clock);
+
+    const set = (n, a) => { for (const k in a) n.setAttribute(k, a[k].toFixed ? a[k].toFixed(1) : a[k]); };
+    function tick() {
+      const now = new Date();
+      const s = now.getSeconds(), m = now.getMinutes() + s / 60, h = (now.getHours() % 12) + m / 60;
+      const H = polar(h * 30, 120), M = polar(m * 6, 200), S = polar(s * 6, 246), T = polar(s * 6 + 180, 34);
+      set(hh, { x2: H.x, y2: H.y });
+      set(mh, { x2: M.x, y2: M.y });
+      set(sh, { x1: T.x, y1: T.y, x2: S.x, y2: S.y });
+      set(sd, { cx: S.x, cy: S.y });
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
 </body>
 </html>
