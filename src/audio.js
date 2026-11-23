@@ -82,7 +82,7 @@ export function initAudio(theme) {
   audio.volume = 0.18;
 
   function start() {
-    audio.play().catch(function(){});
+    //audio.play().catch(function(){}); // silence the music
     document.removeEventListener('click',   start, true);
     document.removeEventListener('keydown', start, true);
     document.removeEventListener('mousemove', start, true);

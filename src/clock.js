@@ -1,10 +1,10 @@
 const HOUR_NAMES = [
-  'Dark Hour',      'Hollow Hour',    'Grave Hour',     'Witching Hour',
-  'Bone Hour',      'False Hour',     'Pale Hour',      'Uneasy Hour',
-  'Waking Hour',    'Glass Hour',     'Ascendant Hour', 'Bright Hour',
-  'Zenith Hour',    'Verdict Hour',   'Haze Hour',      'Gold Hour',
-  'Shadow Hour',    'Fraying Hour',   'Threshold Hour', 'Ember Hour',
-  'Blue Hour',      'Velvet Hour',    'Dissolving Hour','Sleep Hour',
+  'Hour',      'Hour',    'Hour',     'Hour',
+  'Hour',      'Hour',     'Hour',      'Hour',
+  'Hour',    'Hour',     'Hour', 'Hour',
+  'Hour',    'Hour',   'Hour',      'Hour',
+  'Hour',    'Hour',   'Hour',      'Hour',
+  'Hour',      'Hour',    'Hour','Hour',
 ];
 
 export function initClock() {
